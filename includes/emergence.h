@@ -6,7 +6,7 @@
 /*   By: smagdela <smagdela@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 15:24:29 by smagdela          #+#    #+#             */
-/*   Updated: 2022/03/03 15:22:37 by smagdela         ###   ########.fr       */
+/*   Updated: 2022/03/04 15:04:29 by smagdela         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@
 
 typedef uint8_t	t_bool;
 
-# define MAX_SPEED	100 // In pixels per frame
-# define MAX_ACCEL	10	// In pixels per frame squared
+# define MAX_SPEED	1 // In pixels per frame
+# define MAX_ACCEL	1 // In pixels per frame squared
 
 /* Boids structure */
 typedef struct s_boid{
@@ -100,6 +100,8 @@ int			red_cross_handler(t_image *image);
 
 /* Drawing functions */
 void		draw_pixel(t_image *image, size_t x, size_t y, int color);
+int			clear_window(t_image *image, int color);
+void		clear_window_fade(t_image *image);
 
 /* Colouring functions */
 int			get_pixel_color(size_t x, size_t y, t_image *image);

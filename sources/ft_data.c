@@ -6,7 +6,7 @@
 /*   By: smagdela <smagdela@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 10:30:00 by smagdela          #+#    #+#             */
-/*   Updated: 2022/03/03 15:24:52 by smagdela         ###   ########.fr       */
+/*   Updated: 2022/03/04 15:03:42 by smagdela         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ void	free_n_destroy(t_image *image, t_display *display)
 		mlx_destroy_image(image->display->mlx_ptr, image->image_ptr);
 	if (image)
 	{
+		if (image->boids)
+			free(image->boids);
 		free(image);
 		image = NULL;
 	}
@@ -48,18 +50,26 @@ void	free_n_destroy(t_image *image, t_display *display)
 
 static void	init_boids(int nb_boids, t_image *image)
 {
-	t_boid	boids_tmp[nb_boids];
+	t_boid	*boids_tmp;
 	int		i;
 
+	boids_tmp = malloc(sizeof(t_boid) * nb_boids);
+	if (!boids_tmp)
+	{
+		free_n_destroy(image, image->display);
+		ft_error("malloc");
+	}
 	i = 0;
 	while (i < nb_boids)
 	{
 		boids_tmp[i].x = (i * image->display->win_w / 10)
 			% image->display->win_w;
-		boids_tmp[i].y = (i / 10 + 1) * (image->display->win_h / 10)
+		boids_tmp[i].y = ((i / 10 + 1) * (image->display->win_h / 10))
 			% image->display->win_h;
-		boids_tmp[i].x_vel = (double)random() * (MAX_SPEED / RAND_MAX);
-		boids_tmp[i].y_vel = (double)random() * (MAX_SPEED / RAND_MAX);
+		boids_tmp[i].x_vel = random() * (double)MAX_SPEED / (double)RAND_MAX *
+			(random() % 2 == 0 ? 1 : -1);
+		boids_tmp[i].y_vel = random() * (double)MAX_SPEED / (double)RAND_MAX *
+			(random() % 2 == 0 ? 1 : -1);
 		boids_tmp[i].x_acc = 0;
 		boids_tmp[i].y_acc = 0;
 		boids_tmp[i].color = 0xFFFFFF;

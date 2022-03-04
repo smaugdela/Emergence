@@ -6,7 +6,7 @@
 /*   By: smagdela <smagdela@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 15:02:52 by smagdela          #+#    #+#             */
-/*   Updated: 2022/03/03 15:17:54 by smagdela         ###   ########.fr       */
+/*   Updated: 2022/03/04 14:28:01 by smagdela         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,6 @@ void boids_move(t_image *image)
 			image->boids[i].y += image->display->win_h;
 		if (image->boids[i].y > image->display->win_h)
 			image->boids[i].y -= image->display->win_h;
-		i++;
+		++i;
 	}
 }

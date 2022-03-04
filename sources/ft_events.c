@@ -6,7 +6,7 @@
 /*   By: smagdela <smagdela@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 15:45:38 by smagdela          #+#    #+#             */
-/*   Updated: 2022/03/03 15:30:08 by smagdela         ###   ########.fr       */
+/*   Updated: 2022/03/04 15:05:00 by smagdela         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,19 @@ int	loop_handler(t_image *image)
 	int		i;
 
 	i = 0;
+	clear_window_fade(image);
 	while (i < image->nb_boids)
 	{
 		draw_pixel(image, (size_t)image->boids[i].x, (size_t)image->boids[i].y,
 			image->boids[i].color);
+		/*
+		printf("boid nb %d, x = %f y = %f velx = %f vely = %f xacc = %f yacc = %f color = %d maxspeed = %d maxaccel = %d\n", i,
+			image->boids[i].x, image->boids[i].y,
+			image->boids[i].x_vel, image->boids[i].y_vel,
+			image->boids[i].x_acc, image->boids[i].y_acc,
+			image->boids[i].color, image->boids[i].max_speed,
+			image->boids[i].max_accel);
+		*/
 		i++;
 	}
 	mlx_put_image_to_window(image->display->mlx_ptr,

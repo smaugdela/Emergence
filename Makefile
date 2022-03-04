@@ -6,7 +6,7 @@
 #    By: smagdela <smagdela@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/09 15:00:41 by smagdela          #+#    #+#              #
-#    Updated: 2022/03/03 15:20:30 by smagdela         ###   ########.fr        #
+#    Updated: 2022/03/04 14:05:07 by smagdela         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,7 +33,7 @@ SRCS	:=	${addprefix ${SRCD},${SRCS}}
 
 CC	=	clang
 CFLAGS	=	-Wall -Wextra -Werror
-MLXFLAGS	=	-lX11 -lXext -lm -lz
+MLXFLAGS	=	-lX11 -lXext -lm -lz -g
 LIBSMK	=	make -C
 
 ###################
