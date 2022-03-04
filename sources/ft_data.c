@@ -6,7 +6,7 @@
 /*   By: smagdela <smagdela@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 10:30:00 by smagdela          #+#    #+#             */
-/*   Updated: 2022/03/04 15:03:42 by smagdela         ###   ########.fr       */
+/*   Updated: 2022/03/04 17:11:37 by smagdela         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,6 @@ static void	init_boids(int nb_boids, t_image *image)
 		boids_tmp[i].x_acc = 0;
 		boids_tmp[i].y_acc = 0;
 		boids_tmp[i].color = 0xFFFFFF;
-		boids_tmp[i].max_speed = MAX_SPEED;
-		boids_tmp[i].max_accel = MAX_ACCEL;
 		++i;
 	}
 	image->boids = boids_tmp;

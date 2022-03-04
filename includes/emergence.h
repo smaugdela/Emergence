@@ -6,7 +6,7 @@
 /*   By: smagdela <smagdela@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 15:24:29 by smagdela          #+#    #+#             */
-/*   Updated: 2022/03/04 15:04:29 by smagdela         ###   ########.fr       */
+/*   Updated: 2022/03/04 17:33:18 by smagdela         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,10 @@
 
 typedef uint8_t	t_bool;
 
-# define MAX_SPEED	1 // In pixels per frame
-# define MAX_ACCEL	1 // In pixels per frame squared
+# define MAX_SPEED	5 // In pixels per frame
+# define MAX_ACCEL	0.01 // In pixels per frame squared
+# define VIEW_RANGE	500 // In pixels
+# define FOLLOW_RATE	1 //
 
 /* Boids structure */
 typedef struct s_boid{
@@ -40,8 +42,6 @@ typedef struct s_boid{
 	double	x_acc;
 	double	y_acc;
 	int		color;
-	int		max_speed;
-	int		max_accel;
 }	t_boid;
 
 /* Data structures for mlx */
