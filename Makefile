@@ -5,82 +5,100 @@
 #                                                     +:+ +:+         +:+      #
 #    By: smagdela <smagdela@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2021/12/09 15:00:41 by smagdela          #+#    #+#              #
-#    Updated: 2022/03/04 14:05:07 by smagdela         ###   ########.fr        #
+#    Created: 2022/10/09 14:22:11 by smagdela          #+#    #+#              #
+#    Updated: 2023/06/10 17:46:26 by smagdela         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+# valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes	// Check complet de valgrind.
+# lsof -i -a -c ircserv  // Check les leaks de fds associes au reseau (sockets).
+
 #################
-#	VARIABLES	#
+#       Variables       #
 #################
 
-NAME	=	emergence
+NAME     =	emergence
 
-LIBSD	=	libs/
-LIBFTD	=	${addprefix ${LIBSD},libft/}
-MLXD	=	${addprefix ${LIBSD},mlx_linux/}
-INCD	=	includes/
-SRCD	=	sources/
-OBJD	=	objects/
+INCS    = 	emergence.hpp \
+			# class/Particle.hpp \
 
-LIBFT	:=	${addprefix ${LIBFTD},libft.a}
-MLX		:=	${addprefix ${MLXD},libmlx_Linux.a}
-LIBS	:=	${LIBFT} ${MLX}
-SRCS	=	emergence.c parsing.c ft_utils.c ft_data.c ft_draw.c ft_colouring.c ft_colouring_2.c ft_events.c ft_events_2.c boids_movement.c
-OBJS	:=	${addprefix ${OBJD},${SRCS:.c=.o}}
-DEPS	:=	${addprefix ${OBJD},${SRCS:.c=.d}}
-SRCS	:=	${addprefix ${SRCD},${SRCS}}
+SRCS    =	main.cpp \
+			# class/Particle.cpp \
 
-CC	=	clang
-CFLAGS	=	-Wall -Wextra -Werror
-MLXFLAGS	=	-lX11 -lXext -lm -lz -g
-LIBSMK	=	make -C
+OBJS    =       ${SRCS:.cpp=.o}
 
-###################
-#	FANCY STUFF   #
-###################
+INCD    =       includes/
+SRCD    =       sources/
+OBJD    =       objects/
 
-GREEN	=	\033[0;32m
-RED		=	\033[1;31m
-NC		=	\033[0m
+INCS    :=      ${addprefix ${INCD},${INCS}}
+OBJS    :=      ${addprefix ${OBJD},${OBJS}}
+SRCS    :=      ${addprefix ${SRCD},${SRCS}}
 
-WHALE	=	"\n${GREEN}       ::: \n     ___:____     |^\/^| \n   ,'        '.    \  / \n   |  O        \___/  | \n ~^~^~^~^~^~^~^~^~^~^~^~^~\n \n Compilation Successful!	${NC}\n"
-NUKE	=	"\n${RED}     _.-^^---....,,--       \n _--                  --_  \n<                        >)\n|                         | \n \._                   _./  \n    '''--. . , ; .--'''       \n          | |   |             \n       .-=||  | |=-.   \n       '-=£€%&%€£=-'   \n          | ;  :|     \n _____.,-£%&€@%£&£~,._____${NC}\n\n"
+CXX             =       c++
+CXXFLAGS        =       -g -Wall -Wextra -Werror -lsfml-graphics -lsfml-window -lsfml-system
+
+#################
+#       Fancy Stuff     #
+#################
+
+GREY    =       \033[0;30m
+RED     =       \033[0;31m
+GREEN   =       \033[0;32m
+YELLOW  =       \033[0;33m
+BLUE    =       \033[0;34m
+PURPLE  =       \033[0;35m
+WHITE   =       \033[0;37m
+CYAN    =       \033[0;96m
+
+S_GREY  =       \033[1;30m
+S_RED   =       \033[1;31m
+S_GREEN =       \033[1;32m
+S_YELLOW         =      \033[1;33m
+S_BLUE  =       \033[1;34m
+S_PURPLE         =      \033[1;35m
+S_WHITE =       \033[1;37m
+S_CYAN  =       \033[1;96m
+
+BOLD    =       \033[1m
+NC      =       \033[0m
+
+# Box Drawing Unicode
+# ┌─┬─┐
+# │ │ │
+# ├─┼─┤
+# │ │ │
+# └─┴─┘
 
 #############
-#	RULES	#
+#       Rules   #
 #############
 
-all:	${NAME}
+all:    ${NAME}
 
-${NAME}:	${LIBS} ${OBJS}
-	${CC} ${CFLAGS} ${OBJS} ${MLXFLAGS} ${LIBS} -o ${NAME}
-	@echo ${WHALE}
+${OBJD}%.o:     ${SRCD}%.cpp
+		@echo '➤ Compiling $@...'
+		@mkdir -p ${OBJD}
+		@mkdir -p ${OBJD}/class
+		@mkdir -p ${OBJD}/commands
+		@${CXX} ${CXXFLAGS} -c -o $@ -I${INCD} $<
+		@echo '✔ Object file built!'
 
-${OBJD}%.o:	${SRCD}%.c
-	mkdir -p ${OBJD}
-	${CC} ${CFLAGS} -c -o $@ -I${INCD} -I${LIBFTD} -I${MLXD} -MMD $<
-
-${LIBS}:
-	${LIBSMK} ${LIBFTD} bonus
-	${LIBSMK} ${MLXD} all
+${NAME}: ${OBJS}
+		@echo '➤ Compiling $@...'
+		@${CXX} ${CXXFLAGS} ${OBJS} -o ${NAME}
+		@echo '✔ Binary available!'
 
 clean:
-	-rm -rf ${OBJD} ${DEPD}
-	${LIBSMK} ${LIBFTD} clean
-	${LIBSMK} ${MLXD} clean
+		@echo '➤ Deleting object files...'
+		@-rm -rf ${OBJD}
+		@echo '✔ Object files deleted!'
 
-fclean:	clean
-	-rm ${NAME}
-	${LIBSMK} ${LIBFTD} fclean
-	${LIBSMK} ${MLXD} clean
-	@echo ${NUKE}
+fclean: clean
+		@echo '➤ Deleting executable...'
+		@-rm -rf ${NAME}
+		@echo '✔ Executable deleted!'
 
-re:		fclean all
+re:     fclean  all
 
-norm:
-	norminette ${SRCS} ${INCD}*.h ${LIBFTD}*.c ${LIBFTD}*.h
-
-.PHONY : re all clean fclean norm
-
--include ${DEPS}
+.PHONY: all clean fclean re
