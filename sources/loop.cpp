@@ -2,8 +2,15 @@
 
 int loop(sf::RenderWindow &window)
 {
+	particle_type type;
+	type.id = 0;
+	type.color = sf::Color::Red;
 
-	particle_type type = {0, sf::Color::Red, {{0, 1}}};
+	// Initialize a vector of interactions
+	std::vector<std::vector<int>> interactions;
+	std::vector<int> interaction = {0, 1};
+	interactions.push_back(interaction);
+
 	std::vector<Particle> particles;
 	for (int i = 0; i < PARTICLE_NUMBER; i++)
 	{
@@ -23,6 +30,7 @@ int loop(sf::RenderWindow &window)
 
 		for (std::vector<Particle>::iterator it = particles.begin(); it != particles.end(); ++it)
 		{
+			it->update();
 			it->draw(window);
 		}
 

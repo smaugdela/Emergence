@@ -20,6 +20,7 @@ Particle::Particle(const particle_type type)
 
 Particle::Particle(const Particle &src)
 {
+	*this = src;
 }
 
 /*
@@ -54,6 +55,22 @@ Particle &Particle::operator=(Particle const &rhs)
 
 void Particle::update()
 {
+	// Update the particle velocity
+	_vx += rand() % MAX_ACCELERATION * (rand() % 2 ? 1 : -1);
+	_vy += rand() % MAX_ACCELERATION * (rand() % 2 ? 1 : -1);
+
+	// Check velocity limits
+	if (_vx > MAX_VELOCITY)
+		_vx = MAX_VELOCITY;
+	if (_vy > MAX_VELOCITY)
+		_vy = MAX_VELOCITY;
+
+	// Check wall collision
+	if (_x + _vx < 0 || _x + _vx > GRID_SIZE)
+		_vx = -_vx;
+	if (_y + _vy < 0 || _y + _vy > GRID_SIZE)
+		_vy = -_vy;
+
 	// Update the particle position
 	_x += _vx;
 	_y += _vy;

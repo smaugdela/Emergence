@@ -9,10 +9,6 @@ struct particle_type
 {
 	size_t id;
 	sf::Color color;
-	// This vector contains the relations between the families.
-	// The first element is the family id, the second is the force that is exerted between the two particle types.
-	std::vector<int[2]> interactions;
-
 } typedef particle_type;
 
 class Particle
