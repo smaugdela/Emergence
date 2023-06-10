@@ -3,6 +3,8 @@
 
 #include "macros.hpp"
 
+#include "class/Particle.hpp"
+
 #include <SFML/Graphics.hpp>
 
 #include <stdio.h>
@@ -14,5 +16,7 @@
 #include <vector>
 #include <iostream>
 #include <cstring>
+
+int loop(sf::RenderWindow &window);
 
 #endif
