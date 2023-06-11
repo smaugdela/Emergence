@@ -9,6 +9,7 @@ struct particle_type
 {
 	size_t id;
 	sf::Color color;
+	size_t amount;
 } typedef particle_type;
 
 class Particle

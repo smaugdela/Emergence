@@ -3,6 +3,7 @@
 
 #include "macros.hpp"
 
+#include "class/Settings.hpp"
 #include "class/Particle.hpp"
 
 #include <SFML/Graphics.hpp>
@@ -17,6 +18,9 @@
 #include <iostream>
 #include <cstring>
 
+extern Settings my_settings;
+
 int loop(sf::RenderWindow &window);
+void init_simulation(std::vector<particle_type> &types, std::vector<std::vector<int>> &interactions);
 
 #endif

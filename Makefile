@@ -6,7 +6,7 @@
 #    By: smagdela <smagdela@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/09 14:22:11 by smagdela          #+#    #+#              #
-#    Updated: 2023/06/10 18:52:30 by smagdela         ###   ########.fr        #
+#    Updated: 2023/06/11 18:28:55 by smagdela         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,10 +22,12 @@ NAME     =	emergence
 INCS    = 	emergence.hpp \
 			macro.hpp \
 			class/Particle.hpp \
+			class/Settings.hpp \
 
 SRCS    =	main.cpp \
 			loop.cpp \
 			class/Particle.cpp \
+			class/Settings.cpp \
 
 OBJS    =       ${SRCS:.cpp=.o}
 

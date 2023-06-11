@@ -2,20 +2,8 @@
 
 int loop(sf::RenderWindow &window)
 {
-	particle_type type;
-	type.id = 0;
-	type.color = sf::Color::Red;
-
-	// Initialize a vector of interactions
-	std::vector<std::vector<int>> interactions;
-	std::vector<int> interaction = {0, 1};
-	interactions.push_back(interaction);
-
-	std::vector<Particle> particles;
-	for (int i = 0; i < PARTICLE_NUMBER; i++)
-	{
-		particles.push_back(Particle(type));
-	}
+	std::time_t t = std::time(0);
+	std::time_t deltat = 0;
 
 	while (window.isOpen())
 	{
@@ -28,11 +16,33 @@ int loop(sf::RenderWindow &window)
 
 		window.clear();
 
-		for (std::vector<Particle>::iterator it = particles.begin(); it != particles.end(); ++it)
+		my_settings.update_particles();
+
+		deltat = std::time(0) - t;
+		my_settings.draw_particles(window);
+
+		sf::Font font;
+		if (!font.loadFromFile("/usr/share/fonts/open-sans/OpenSans-BoldItalic.ttf"))
 		{
-			it->update();
-			it->draw(window);
+			std::cerr << "Error loading font" << std::endl;
+			return EXIT_FAILURE;
 		}
+		sf::Text text;
+		// choix de la police à utiliser
+		text.setFont(font); // font est un sf::Font
+		// choix de la chaîne de caractères à afficher
+		std::string fps = std::to_string(1.0f / deltat);
+		text.setString(fps);
+		// choix de la taille des caractères
+		text.setCharacterSize(24); // exprimée en pixels, pas en points !
+		// choix de la couleur du texte
+		text.setFillColor(sf::Color::White);
+		// choix de la position
+		text.setPosition(100, 100);
+
+		window.draw(text);
+
+		t = std::time(0);
 
 		window.display();
 	}
