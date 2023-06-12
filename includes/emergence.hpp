@@ -22,5 +22,6 @@ extern Settings my_settings;
 
 int loop(sf::RenderWindow &window);
 void init_simulation(std::vector<particle_type> &types, std::vector<std::vector<int>> &interactions);
+void fps_counter(sf::RenderWindow &window, std::string fps);
 
 #endif

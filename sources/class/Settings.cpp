@@ -38,6 +38,9 @@ Settings::Settings()
 	max_velocity = MAX_VELOCITY;
 	this->set_max_velocity(max_velocity);
 
+	fps_limit = FPS_LIMIT;
+	this->set_fps_limit(fps_limit);
+
 	// Initialize the types, interactions and particles vectors
 	init_simulation(this->types, this->interactions, this->particles);
 }
@@ -52,15 +55,15 @@ void Settings::init_simulation(std::vector<particle_type> &types, std::vector<st
 	type.amount = this->get_particle_number() / 3;
 	types.push_back(type);
 
-	type.id = 1;
-	type.color = sf::Color::Green;
-	type.amount = this->get_particle_number() / 3;
-	types.push_back(type);
+	// type.id = 1;
+	// type.color = sf::Color::Green;
+	// type.amount = this->get_particle_number() / 3;
+	// types.push_back(type);
 
-	type.id = 2;
-	type.color = sf::Color::Red;
-	type.amount = this->get_particle_number() / 3;
-	types.push_back(type);
+	// type.id = 2;
+	// type.color = sf::Color::Red;
+	// type.amount = this->get_particle_number() / 3;
+	// types.push_back(type);
 
 	// Initialize the interactions vector
 	// Hardcoded for the moment
@@ -70,19 +73,19 @@ void Settings::init_simulation(std::vector<particle_type> &types, std::vector<st
 	// 1 1 0
 	std::vector<float> interaction;
 	interaction.push_back(0.0f);
-	interaction.push_back(0.5f);
-	interaction.push_back(1.0f);
+	// interaction.push_back(0.5f);
+	// interaction.push_back(1.0f);
 	interactions.push_back(interaction);
-	interaction.clear();
-	interaction.push_back(0.5f);
-	interaction.push_back(0.0f);
-	interaction.push_back(1.0f);
-	interactions.push_back(interaction);
-	interaction.clear();
-	interaction.push_back(1.0f);
-	interaction.push_back(1.0f);
-	interaction.push_back(0.0f);
-	interactions.push_back(interaction);
+	// interaction.clear();
+	// interaction.push_back(0.5f);
+	// interaction.push_back(0.0f);
+	// interaction.push_back(1.0f);
+	// interactions.push_back(interaction);
+	// interaction.clear();
+	// interaction.push_back(1.0f);
+	// interaction.push_back(1.0f);
+	// interaction.push_back(0.0f);
+	// interactions.push_back(interaction);
 
 	// Initialize the particles vector
 	for (size_t i = 0; i < this->types.size(); i++)
@@ -122,6 +125,7 @@ Settings &Settings::operator=(Settings const &rhs)
 		this->max_acceleration = rhs.max_acceleration;
 		this->max_velocity = rhs.max_velocity;
 		this->grid_size = rhs.grid_size;
+		this->fps_limit = rhs.fps_limit;
 		this->types = rhs.types;
 		this->interactions = rhs.interactions;
 	}
@@ -139,6 +143,7 @@ std::ostream &operator<<(std::ostream &o, Settings const &i)
 	o << "Max acceleration: " << i.get_max_acceleration() << std::endl;
 	o << "Max velocity: " << i.get_max_velocity() << std::endl;
 	o << "Grid size: " << i.get_grid_size() << std::endl;
+	o << "fps_limit: " << i.get_fps_limit() << std::endl;
 	o << "Types: ";
 	for (auto type : i.get_types())
 		o << "id: " << type.id;
@@ -156,6 +161,16 @@ std::ostream &operator<<(std::ostream &o, Settings const &i)
 /*
 ** --------------------------------- METHODS ----------------------------------
 */
+
+void Settings::compute_particles()
+{
+	// Update the particles
+	for (size_t i = 0; i < particles.size(); i++)
+	{
+		// Update the acceleration
+		this->particles[i].compute();
+	}
+}
 
 void Settings::update_particles()
 {
@@ -306,6 +321,17 @@ void Settings::set_grid_size(unsigned int grid_size)
 	this->grid_size = grid_size;
 }
 
+void Settings::set_fps_limit(unsigned int fps_limit)
+{
+
+	if (fps_limit > 1000)
+	{
+		fps_limit = 1000;
+		std::cerr << "FPS limit is too big, it has been set to 1000." << std::endl;
+	}
+	this->fps_limit = fps_limit;
+}
+
 // Getters
 unsigned int Settings::get_width() const
 {
@@ -365,6 +391,11 @@ std::vector<std::vector<float>> Settings::get_interactions() const
 std::vector<Particle> Settings::get_particles() const
 {
 	return this->particles;
+}
+
+unsigned int Settings::get_fps_limit() const
+{
+	return this->fps_limit;
 }
 
 /* ************************************************************************** */

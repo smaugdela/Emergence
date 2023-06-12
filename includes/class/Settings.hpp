@@ -22,6 +22,7 @@ public:
 
 	// Methods
 	// void add_type(particle_type type);
+	void compute_particles(void);
 	void update_particles(void);
 	void draw_particles(sf::RenderWindow &window) const;
 
@@ -35,6 +36,7 @@ public:
 	unsigned int get_max_acceleration() const;
 	unsigned int get_max_velocity() const;
 	unsigned int get_grid_size() const;
+	unsigned int get_fps_limit() const;
 	std::vector<particle_type> get_types() const;
 	std::vector<std::vector<float>> get_interactions() const;
 	std::vector<Particle> get_particles() const;
@@ -49,6 +51,7 @@ public:
 	void set_max_acceleration(unsigned int max_acceleration);
 	void set_max_velocity(unsigned int max_velocity);
 	void set_grid_size(unsigned int grid_size);
+	void set_fps_limit(unsigned int framerate_limit);
 
 private:
 	void init_simulation(std::vector<particle_type> &types, std::vector<std::vector<float>> &interactions, std::vector<Particle> &particles);
@@ -57,6 +60,7 @@ private:
 	unsigned int width;
 	unsigned int height;
 	std::string title;
+	unsigned int fps_limit;
 
 	unsigned int antialiasing_level; // x4 is pretty enough.
 

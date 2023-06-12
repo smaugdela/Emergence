@@ -2,11 +2,16 @@
 
 int loop(sf::RenderWindow &window)
 {
-	std::time_t t = std::time(0);
-	std::time_t deltat = 0;
+	sf::Clock clock;
+	float last_time = 0;
+	float current_time;
 
 	while (window.isOpen())
 	{
+
+		current_time = clock.getElapsedTime().asSeconds();
+
+		// Handle events
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
@@ -14,35 +19,22 @@ int loop(sf::RenderWindow &window)
 				window.close();
 		}
 
+		// Main clear+draw+display loop
 		window.clear();
 
+		// Update the particles
+		my_settings.compute_particles();
 		my_settings.update_particles();
-
-		deltat = std::time(0) - t;
 		my_settings.draw_particles(window);
 
-		sf::Font font;
-		if (!font.loadFromFile("/usr/share/fonts/open-sans/OpenSans-BoldItalic.ttf"))
-		{
-			std::cerr << "Error loading font" << std::endl;
-			return EXIT_FAILURE;
-		}
-		sf::Text text;
-		// choix de la police à utiliser
-		text.setFont(font); // font est un sf::Font
-		// choix de la chaîne de caractères à afficher
-		std::string fps = std::to_string(1.0f / deltat);
-		text.setString(fps);
-		// choix de la taille des caractères
-		text.setCharacterSize(24); // exprimée en pixels, pas en points !
-		// choix de la couleur du texte
-		text.setFillColor(sf::Color::White);
-		// choix de la position
-		text.setPosition(100, 100);
+		// Display the FPS
+		std::string fps = std::to_string(1.f / (current_time - last_time));
+		last_time = current_time;
+		// fps_counter(window, fps);
 
-		window.draw(text);
-
-		t = std::time(0);
+		// Limit the framerate
+		while (my_settings.get_fps_limit() && (clock.getElapsedTime().asSeconds() - current_time) < 1.f / 60.f)
+			;
 
 		window.display();
 	}

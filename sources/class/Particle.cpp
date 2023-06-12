@@ -16,6 +16,10 @@ Particle::Particle(const particle_type type)
 	// Generate random coordinates for the particle between, 0 and GRID_SIZE;
 	_x = rand() % my_settings.get_grid_size();
 	_y = rand() % my_settings.get_grid_size();
+	_future_x = _x;
+	_future_y = _y;
+	_future_vx = _vx;
+	_future_vy = _vy;
 }
 
 Particle::Particle(const Particle &src)
@@ -45,6 +49,10 @@ Particle &Particle::operator=(Particle const &rhs)
 		_vx = rhs._vx;
 		_vy = rhs._vy;
 		_type = rhs._type;
+		_future_x = rhs._future_x;
+		_future_y = rhs._future_y;
+		_future_vx = rhs._future_vx;
+		_future_vy = rhs._future_vy;
 	}
 	return *this;
 }
@@ -53,27 +61,56 @@ Particle &Particle::operator=(Particle const &rhs)
 ** --------------------------------- METHODS ----------------------------------
 */
 
-void Particle::update()
+void Particle::compute()
 {
+	_future_x = _x;
+	_future_y = _y;
+	_future_vx = _vx;
+	_future_vy = _vy;
+
 	// Update the particle velocity
-	_vx += rand() % my_settings.get_max_acceleration() * (rand() % 2 ? 1 : -1);
-	_vy += rand() % my_settings.get_max_acceleration() * (rand() % 2 ? 1 : -1);
+	// _future_vx += rand() % my_settings.get_max_acceleration() * (rand() % 2 ? 1 : -1);
+	// _future_vy += rand() % my_settings.get_max_acceleration() * (rand() % 2 ? 1 : -1);
+
+	// Update the particle velocity using actual interaction equation
+	for (size_t i = 0; i < my_settings.get_particle_number(); i++)
+	{
+		Particle particleB = my_settings.get_particles()[i];
+		if (&particleB == this)
+			continue;
+		int distance = std::sqrt(std::pow(particleB._x - _x, 2) + std::pow(particleB._y - _y, 2));
+
+		// Check if the particles are too close, and as such repell each other
+		if (distance <= my_settings.get_particle_size())
+		{
+		}
+
+		// Check if the particles are close enough to interact
+	}
 
 	// Check velocity limits
-	if (static_cast<unsigned int>(std::abs(_vx)) > my_settings.get_max_velocity())
-		_vx = my_settings.get_max_velocity();
-	if (static_cast<unsigned int>(std::abs(_vy)) > my_settings.get_max_velocity())
-		_vy = my_settings.get_max_velocity();
+	if (static_cast<unsigned int>(std::abs(_future_vx)) > my_settings.get_max_velocity())
+		_future_vx = my_settings.get_max_velocity();
+	if (static_cast<unsigned int>(std::abs(_future_vy)) > my_settings.get_max_velocity())
+		_future_vy = my_settings.get_max_velocity();
 
 	// Check wall collision
-	if (_x + _vx < 0 || _x + _vx > static_cast<int>(my_settings.get_grid_size()))
-		_vx = -_vx;
-	if (_y + _vy < 0 || _y + _vy > static_cast<int>(my_settings.get_grid_size()))
-		_vy = -_vy;
+	if (_future_x + _future_vx < 0 || _future_x + _future_vx > static_cast<int>(my_settings.get_grid_size()))
+		_future_vx = -_future_vx;
+	if (_future_y + _future_vy < 0 || _future_y + _future_vy > static_cast<int>(my_settings.get_grid_size()))
+		_future_vy = -_future_vy;
 
-	// Update the particle position
-	_x += _vx;
-	_y += _vy;
+	// Update the future particle position
+	_future_x += _future_vx;
+	_future_y += _future_vy;
+}
+
+void Particle::update()
+{
+	_x = _future_x;
+	_y = _future_y;
+	_vx = _future_vx;
+	_vy = _future_vy;
 }
 
 void Particle::draw(sf::RenderWindow &window) const

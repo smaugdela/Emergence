@@ -22,7 +22,10 @@ public:
 	Particle &operator=(Particle const &rhs);
 	~Particle();
 
-	// Update the particle position
+	// Compute future state
+	void compute();
+
+	// Update the actual state to the future state
 	void update();
 
 	// Draw the particle on the window
@@ -33,6 +36,10 @@ private:
 	int _y;
 	int _vx;
 	int _vy;
+	int _future_x;
+	int _future_y;
+	int _future_vx;
+	int _future_vy;
 	particle_type _type;
 };
 
