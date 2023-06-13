@@ -17,6 +17,7 @@
 #include <vector>
 #include <iostream>
 #include <cstring>
+#include <cmath>
 
 extern Settings my_settings;
 

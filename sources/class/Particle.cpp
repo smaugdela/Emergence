@@ -73,19 +73,45 @@ void Particle::compute()
 	// _future_vy += rand() % my_settings.get_max_acceleration() * (rand() % 2 ? 1 : -1);
 
 	// Update the particle velocity using actual interaction equation
-	for (size_t i = 0; i < my_settings.get_particle_number(); i++)
+	for (size_t i = 0; i < my_settings.get_particles().size(); i++)
 	{
 		Particle particleB = my_settings.get_particles()[i];
 		if (&particleB == this)
 			continue;
-		int distance = std::sqrt(std::pow(particleB._x - _x, 2) + std::pow(particleB._y - _y, 2));
+		unsigned int distance = std::sqrt(std::pow(particleB._x - _x, 2) + std::pow(particleB._y - _y, 2));
+
+		if (distance == 0)
+			continue;
 
 		// Check if the particles are too close, and as such repell each other
-		if (distance <= my_settings.get_particle_size())
+		if (distance <= my_settings.get_particle_size() * 2)
 		{
+			double force = (double)my_settings.get_max_acceleration();
+
+			// Compute the interaction angle
+			double angle = std::atan2(particleB._y - _y, particleB._x - _x);
+
+			// Update the particle velocity
+			_future_vx += -1.0 * force * std::cos(angle);
+			_future_vy += -1.0 * force * std::sin(angle);
+			continue;
 		}
 
 		// Check if the particles are close enough to interact
+		// if (distance > my_settings.get_grid_size() / 2)
+		// 	continue;
+
+		// Compute the interaction force
+		double force = (double)my_settings.get_max_acceleration() / (double)distance;
+
+		// Compute the interaction angle
+		double angle = std::atan2(particleB._y - _y, particleB._x - _x);
+
+		// Update the particle velocity
+		_future_vx += force * std::cos(angle) * my_settings.get_interactions()[_type.id][particleB._type.id];
+		_future_vy += force * std::sin(angle) * my_settings.get_interactions()[_type.id][particleB._type.id];
+
+		// std::cout << "force: " << force << "angle: " << angle << "cos(angle): " << std::cos(angle) << "sin(angle): " << std::sin(angle) << "interaction factor" << my_settings.get_interactions()[_type.id][particleB._type.id] << std::endl;
 	}
 
 	// Check velocity limits

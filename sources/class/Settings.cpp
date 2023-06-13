@@ -23,7 +23,7 @@ Settings::Settings()
 	antialiasing_level = ANTIALIASING_LEVEL;
 	this->set_antialiasing_level(antialiasing_level);
 
-	particle_size = PARTICLE_SIZE;
+	particle_size = PARTICLE_RADIUS;
 	this->set_particle_size(particle_size);
 
 	particle_number = PARTICLE_NUMBER;
@@ -72,7 +72,7 @@ void Settings::init_simulation(std::vector<particle_type> &types, std::vector<st
 	// 0.5 0 1
 	// 1 1 0
 	std::vector<float> interaction;
-	interaction.push_back(0.0f);
+	interaction.push_back(-1.0f);
 	// interaction.push_back(0.5f);
 	// interaction.push_back(1.0f);
 	interactions.push_back(interaction);

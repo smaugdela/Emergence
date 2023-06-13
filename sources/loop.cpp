@@ -30,11 +30,11 @@ int loop(sf::RenderWindow &window)
 		// Display the FPS
 		std::string fps = std::to_string(1.f / (current_time - last_time));
 		last_time = current_time;
-		// fps_counter(window, fps);
+		fps_counter(window, fps);
 
 		// Limit the framerate
-		while (my_settings.get_fps_limit() && (clock.getElapsedTime().asSeconds() - current_time) < 1.f / 60.f)
-			;
+		// while (my_settings.get_fps_limit() && (clock.getElapsedTime().asSeconds() - current_time) < 1.f / 60.f)
+		// 	;
 
 		window.display();
 	}
