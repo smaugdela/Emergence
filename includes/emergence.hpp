@@ -5,6 +5,7 @@
 
 #include "class/Settings.hpp"
 #include "class/Particle.hpp"
+#include "class/Myrand.hpp"
 
 #include <SFML/Graphics.hpp>
 
@@ -18,6 +19,7 @@
 #include <iostream>
 #include <cstring>
 #include <cmath>
+#include <random>
 
 extern Settings my_settings;
 

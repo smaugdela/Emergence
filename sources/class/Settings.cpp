@@ -7,7 +7,7 @@
 Settings::Settings()
 {
 	// Initialise using macros.
-	unsigned int width, height, antialiasing_level, particle_number, max_acceleration, max_velocity, grid_size;
+	unsigned int width, height, antialiasing_level, particle_number, max_acceleration, max_velocity, grid_size, friction_coefficient;
 	std::string title;
 	float particle_size;
 
@@ -29,7 +29,8 @@ Settings::Settings()
 	particle_number = PARTICLE_NUMBER;
 	this->set_particle_number(particle_number);
 
-	grid_size = GRID_SIZE;
+	// grid_size = GRID_SIZE;
+	grid_size = std::max(width, height) * GRID_MULTIPLIER;
 	this->set_grid_size(grid_size);
 
 	max_acceleration = MAX_ACCELERATION;
@@ -40,6 +41,9 @@ Settings::Settings()
 
 	fps_limit = FPS_LIMIT;
 	this->set_fps_limit(fps_limit);
+
+	friction_coefficient = FRICTION_COEFFICIENT;
+	this->set_friction_coefficient(friction_coefficient);
 
 	// Initialize the types, interactions and particles vectors
 	init_simulation(this->types, this->interactions, this->particles);
@@ -72,7 +76,7 @@ void Settings::init_simulation(std::vector<particle_type> &types, std::vector<st
 	// 0.5 0 1
 	// 1 1 0
 	std::vector<float> interaction;
-	interaction.push_back(-1.0f);
+	interaction.push_back(-0.1f);
 	// interaction.push_back(0.5f);
 	// interaction.push_back(1.0f);
 	interactions.push_back(interaction);
@@ -128,6 +132,7 @@ Settings &Settings::operator=(Settings const &rhs)
 		this->fps_limit = rhs.fps_limit;
 		this->types = rhs.types;
 		this->interactions = rhs.interactions;
+		this->friction_coefficient = rhs.friction_coefficient;
 	}
 	return *this;
 }
@@ -144,6 +149,7 @@ std::ostream &operator<<(std::ostream &o, Settings const &i)
 	o << "Max velocity: " << i.get_max_velocity() << std::endl;
 	o << "Grid size: " << i.get_grid_size() << std::endl;
 	o << "fps_limit: " << i.get_fps_limit() << std::endl;
+	o << "Friction: " << i.get_friction_coefficient() << std::endl;
 	o << "Types: ";
 	for (auto type : i.get_types())
 		o << "id: " << type.id;
@@ -283,10 +289,10 @@ void Settings::set_max_acceleration(unsigned int max_acceleration)
 		max_acceleration = 1;
 		std::cerr << "Max acceleration is too small, it has been set to 1." << std::endl;
 	}
-	else if (max_acceleration > grid_size)
+	else if (max_acceleration > grid_size * 10)
 	{
-		max_acceleration = grid_size;
-		std::cerr << "Max acceleration is too big, it has been set to grid_size: " << this->grid_size << std::endl;
+		max_acceleration = grid_size * 10;
+		std::cerr << "Max acceleration is too big, it has been set to grid_size * 10: " << this->grid_size * 10 << std::endl;
 	}
 	this->max_acceleration = max_acceleration;
 }
@@ -330,6 +336,21 @@ void Settings::set_fps_limit(unsigned int fps_limit)
 		std::cerr << "FPS limit is too big, it has been set to 1000." << std::endl;
 	}
 	this->fps_limit = fps_limit;
+}
+
+void Settings::set_friction_coefficient(int friction_coefficient)
+{
+	if (friction_coefficient < 0)
+	{
+		friction_coefficient = 0;
+		std::cerr << "Friction coefficient cannot be negative (maybe later, that could be fun)." << std::endl;
+	}
+	else if (friction_coefficient > 100)
+	{
+		friction_coefficient = 100;
+		std::cerr << "Friction coefficient is too big, it has been set to 100%." << std::endl;
+	}
+	this->friction_coefficient = friction_coefficient;
 }
 
 // Getters
@@ -396,6 +417,11 @@ std::vector<Particle> Settings::get_particles() const
 unsigned int Settings::get_fps_limit() const
 {
 	return this->fps_limit;
+}
+
+int Settings::get_friction_coefficient() const
+{
+	return this->friction_coefficient;
 }
 
 /* ************************************************************************** */

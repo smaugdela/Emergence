@@ -37,6 +37,7 @@ public:
 	unsigned int get_max_velocity() const;
 	unsigned int get_grid_size() const;
 	unsigned int get_fps_limit() const;
+	int get_friction_coefficient() const;
 	std::vector<particle_type> get_types() const;
 	std::vector<std::vector<float>> get_interactions() const;
 	std::vector<Particle> get_particles() const;
@@ -52,6 +53,7 @@ public:
 	void set_max_velocity(unsigned int max_velocity);
 	void set_grid_size(unsigned int grid_size);
 	void set_fps_limit(unsigned int framerate_limit);
+	void set_friction_coefficient(int friction_coefficient);
 
 private:
 	void init_simulation(std::vector<particle_type> &types, std::vector<std::vector<float>> &interactions, std::vector<Particle> &particles);
@@ -70,6 +72,7 @@ private:
 	unsigned int max_acceleration;
 	unsigned int max_velocity;
 	unsigned int grid_size; // This is the size of the subgrid used simulate particles.
+	int friction_coefficient;
 
 	// Particles interactions
 	std::vector<particle_type> types;

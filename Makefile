@@ -6,7 +6,7 @@
 #    By: smagdela <smagdela@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/09 14:22:11 by smagdela          #+#    #+#              #
-#    Updated: 2023/06/12 19:48:54 by smagdela         ###   ########.fr        #
+#    Updated: 2023/06/22 19:47:46 by smagdela         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,6 +23,7 @@ INCS    = 	emergence.hpp \
 			macro.hpp \
 			class/Particle.hpp \
 			class/Settings.hpp \
+			class/Myrand.hpp \
 
 SRCS    =	main.cpp \
 			loop.cpp \
