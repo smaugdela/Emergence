@@ -15,16 +15,16 @@ Particle::Particle(const particle_type type)
 	_vy = 0;
 	// Generate random coordinates for the particle between, 0 and GRID_SIZE;
 
-	std::default_random_engine generator;
-	std::uniform_int_distribution<int> distribution(0, my_settings.get_grid_size() - 1);
-	_x = distribution(generator);
-	_y = distribution(generator);
+	// std::default_random_engine generator;
+	// std::uniform_int_distribution<int> distribution(0, my_settings.get_grid_size() - 1);
+	// _x = distribution(generator);
+	// _y = distribution(generator);
 
 	// _x = read_urandom<int>() % my_settings.get_grid_size();
 	// _y = read_urandom<int>() % my_settings.get_grid_size();
 
-	// _x = rand() % my_settings.get_grid_size();
-	// _y = rand() % my_settings.get_grid_size();
+	_x = rand() % my_settings.get_grid_size();
+	_y = rand() % my_settings.get_grid_size();
 
 	_future_x = _x;
 	_future_y = _y;

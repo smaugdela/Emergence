@@ -4,7 +4,7 @@ Settings my_settings;
 
 int main()
 {
-	// srand((unsigned int)time(NULL));
+	srand(time(0));
 
 	sf::ContextSettings sfml_settings;
 	sfml_settings.antialiasingLevel = my_settings.get_antialiasing_level();

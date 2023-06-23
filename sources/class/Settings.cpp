@@ -56,7 +56,7 @@ void Settings::init_simulation(std::vector<particle_type> &types, std::vector<st
 	particle_type type;
 	type.id = 0;
 	type.color = sf::Color::Blue;
-	type.amount = this->get_particle_number() / 3;
+	type.amount = this->get_particle_number();
 	types.push_back(type);
 
 	// type.id = 1;
