@@ -76,7 +76,7 @@ void Settings::init_simulation(std::vector<particle_type> &types, std::vector<st
 	// 0.5 0 1
 	// 1 1 0
 	std::vector<float> interaction;
-	interaction.push_back(-0.1f);
+	interaction.push_back(-1.f);
 	// interaction.push_back(0.5f);
 	// interaction.push_back(1.0f);
 	interactions.push_back(interaction);
@@ -167,6 +167,43 @@ std::ostream &operator<<(std::ostream &o, Settings const &i)
 /*
 ** --------------------------------- METHODS ----------------------------------
 */
+
+void Settings::load_from_json(json json_settings)
+{
+	// Load the settings from the json file
+	if (json_settings.contains("width"))
+		this->set_width(json_settings["width"]);
+
+	if (json_settings.contains("height"))
+		this->set_height(json_settings["height"]);
+
+	if (json_settings.contains("title"))
+		this->set_title(json_settings["title"]);
+
+	if (json_settings.contains("antialiasing_level"))
+		this->set_antialiasing_level(json_settings["antialiasing_level"]);
+
+	if (json_settings.contains("particle_size"))
+		this->set_particle_size(json_settings["particle_size"]);
+
+	if (json_settings.contains("particle_number"))
+		this->set_particle_number(json_settings["particle_number"]);
+
+	if (json_settings.contains("max_acceleration"))
+		this->set_max_acceleration(json_settings["max_acceleration"]);
+
+	if (json_settings.contains("max_velocity"))
+		this->set_max_velocity(json_settings["max_velocity"]);
+
+	if (json_settings.contains("grid_size"))
+		this->set_grid_size(json_settings["grid_size"]);
+
+	if (json_settings.contains("fps_limit"))
+		this->set_fps_limit(json_settings["fps_limit"]);
+
+	if (json_settings.contains("friction_coefficient"))
+		this->set_friction_coefficient(json_settings["friction_coefficient"]);
+}
 
 void Settings::compute_particles()
 {

@@ -7,6 +7,9 @@
 #include "class/Particle.hpp"
 #include "class/Myrand.hpp"
 
+#include "json.hpp"
+using json = nlohmann::json;
+
 #include <SFML/Graphics.hpp>
 
 #include <stdio.h>

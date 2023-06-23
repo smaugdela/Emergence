@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 #include "Particle.hpp"
+#include "json.hpp"
+using json = nlohmann::json;
 
 class Settings
 {
@@ -22,6 +24,8 @@ public:
 
 	// Methods
 	// void add_type(particle_type type);
+	// void save_to_json(std::string filename);
+	void load_from_json(json json_settings);
 	void compute_particles(void);
 	void update_particles(void);
 	void draw_particles(sf::RenderWindow &window) const;

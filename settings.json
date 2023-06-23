@@ -1,0 +1,13 @@
+{
+	"width": 1000,
+	"height": 1000,
+	"title": "Emergence",
+	"antialiasing_level": 4,
+	"particle_size": 3.0,
+	"particle_number": 100,
+	"max_acceleration": 1000,
+	"max_velocity": 1000,
+	"fps_limit": 0,
+	"friction_coefficient": 25,
+	"grid_size": 1000
+}

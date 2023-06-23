@@ -6,7 +6,7 @@
 #    By: smagdela <smagdela@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/09 14:22:11 by smagdela          #+#    #+#              #
-#    Updated: 2023/06/22 19:47:46 by smagdela         ###   ########.fr        #
+#    Updated: 2023/06/23 19:18:37 by smagdela         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,6 +21,7 @@ NAME     =	emergence
 
 INCS    = 	emergence.hpp \
 			macro.hpp \
+			json.hpp \
 			class/Particle.hpp \
 			class/Settings.hpp \
 			class/Myrand.hpp \
