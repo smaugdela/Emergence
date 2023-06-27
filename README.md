@@ -10,3 +10,4 @@ Trying to demonstrate emergence phenomenon through a simple graphical side-proje
 - [ ] Add enclosed box type window, or infinite repeating left/right and top/bottom window sides.
 - [ ] Add mouse cursor interaction (repulsive/attractive force, generate/delete particles).
 - [ ] Add fake 3D using a 3rd dimension in coordinates computations and a fake depth effect affecting particle size and bluriness.
+- [ ] Add proceduraly generated sound/music in relation to particle behavior
