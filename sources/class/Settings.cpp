@@ -7,9 +7,9 @@
 Settings::Settings()
 {
 	// Initialise using macros.
-	unsigned int width, height, antialiasing_level, particle_number, max_acceleration, max_velocity, grid_size, friction_coefficient;
+	unsigned int width, height, antialiasing_level, particle_number;
 	std::string title;
-	float particle_size;
+	float particle_size, force_factor, grid_size, friction_coefficient, delta_t, boundary_limit, max_range;
 
 	width = WIDTH;
 	this->set_width(width);
@@ -33,17 +33,23 @@ Settings::Settings()
 	grid_size = std::max(width, height) * GRID_MULTIPLIER;
 	this->set_grid_size(grid_size);
 
-	max_acceleration = MAX_ACCELERATION;
-	this->set_max_acceleration(max_acceleration);
-
-	max_velocity = MAX_VELOCITY;
-	this->set_max_velocity(max_velocity);
+	force_factor = FORCE_FACTOR;
+	this->set_force_factor(force_factor);
 
 	fps_limit = FPS_LIMIT;
 	this->set_fps_limit(fps_limit);
 
 	friction_coefficient = FRICTION_COEFFICIENT;
 	this->set_friction_coefficient(friction_coefficient);
+
+	delta_t = DELTA_T;
+	this->set_delta_t(delta_t);
+
+	boundary_limit = BOUNDARY_LIMIT;
+	this->set_boundary_limit(boundary_limit);
+
+	max_range = MAX_RANGE;
+	this->set_max_range(max_range);
 
 	// Initialize the types, interactions and particles vectors
 	init_simulation(this->types, this->interactions, this->particles);
@@ -126,13 +132,15 @@ Settings &Settings::operator=(Settings const &rhs)
 		this->antialiasing_level = rhs.antialiasing_level;
 		this->particle_size = rhs.particle_size;
 		this->particle_number = rhs.particle_number;
-		this->max_acceleration = rhs.max_acceleration;
-		this->max_velocity = rhs.max_velocity;
+		this->force_factor = rhs.force_factor;
 		this->grid_size = rhs.grid_size;
 		this->fps_limit = rhs.fps_limit;
 		this->types = rhs.types;
 		this->interactions = rhs.interactions;
 		this->friction_coefficient = rhs.friction_coefficient;
+		this->delta_t = rhs.delta_t;
+		this->boundary_limit = rhs.boundary_limit;
+		this->max_range = rhs.max_range;
 	}
 	return *this;
 }
@@ -145,11 +153,13 @@ std::ostream &operator<<(std::ostream &o, Settings const &i)
 	o << "Antialiasing level: " << i.get_antialiasing_level() << std::endl;
 	o << "Particle size: " << i.get_particle_size() << std::endl;
 	o << "Particle number: " << i.get_particle_number() << std::endl;
-	o << "Max acceleration: " << i.get_max_acceleration() << std::endl;
-	o << "Max velocity: " << i.get_max_velocity() << std::endl;
+	o << "Max acceleration: " << i.get_force_factor() << std::endl;
 	o << "Grid size: " << i.get_grid_size() << std::endl;
 	o << "fps_limit: " << i.get_fps_limit() << std::endl;
 	o << "Friction: " << i.get_friction_coefficient() << std::endl;
+	o << "Delta t: " << i.get_delta_t() << std::endl;
+	o << "Boundary limit: " << i.get_boundary_limit() << std::endl;
+	o << "Max range: " << i.get_max_range() << std::endl;
 	o << "Types: ";
 	for (auto type : i.get_types())
 		o << "id: " << type.id;
@@ -189,11 +199,8 @@ void Settings::load_from_json(json json_settings)
 	if (json_settings.contains("particle_number"))
 		this->set_particle_number(json_settings["particle_number"]);
 
-	if (json_settings.contains("max_acceleration"))
-		this->set_max_acceleration(json_settings["max_acceleration"]);
-
-	if (json_settings.contains("max_velocity"))
-		this->set_max_velocity(json_settings["max_velocity"]);
+	if (json_settings.contains("force_factor"))
+		this->set_force_factor(json_settings["force_factor"]);
 
 	if (json_settings.contains("grid_size"))
 		this->set_grid_size(json_settings["grid_size"]);
@@ -203,6 +210,15 @@ void Settings::load_from_json(json json_settings)
 
 	if (json_settings.contains("friction_coefficient"))
 		this->set_friction_coefficient(json_settings["friction_coefficient"]);
+
+	if (json_settings.contains("delta_t"))
+		this->set_delta_t(json_settings["delta_t"]);
+
+	if (json_settings.contains("boundary_limit"))
+		this->set_boundary_limit(json_settings["boundary_limit"]);
+
+	if (json_settings.contains("max_range"))
+		this->set_max_range(json_settings["max_range"]);
 }
 
 void Settings::compute_particles()
@@ -319,46 +335,31 @@ void Settings::set_particle_number(unsigned int particle_number)
 	this->particle_number = particle_number;
 }
 
-void Settings::set_max_acceleration(unsigned int max_acceleration)
+void Settings::set_force_factor(float force_factor)
 {
-	if (max_acceleration < 1)
+	if (force_factor < 1.0f)
 	{
-		max_acceleration = 1;
-		std::cerr << "Max acceleration is too small, it has been set to 1." << std::endl;
+		force_factor = 1.0f;
+		std::cerr << "Force factor is too small, it has been set to 1." << std::endl;
 	}
-	else if (max_acceleration > grid_size * 10)
+	else if (force_factor > grid_size * 10.f)
 	{
-		max_acceleration = grid_size * 10;
-		std::cerr << "Max acceleration is too big, it has been set to grid_size * 10: " << this->grid_size * 10 << std::endl;
+		force_factor = grid_size * 10.f;
+		std::cerr << "Force factor is too big, it has been set to grid_size * 10: " << this->grid_size * 10 << std::endl;
 	}
-	this->max_acceleration = max_acceleration;
+	this->force_factor = force_factor;
 }
 
-void Settings::set_max_velocity(unsigned int max_velocity)
-{
-	if (max_velocity < 1)
-	{
-		max_velocity = 1;
-		std::cerr << "Max velocity is too small, it has been set to 1." << std::endl;
-	}
-	else if (max_velocity > grid_size)
-	{
-		max_velocity = grid_size;
-		std::cerr << "Max velocity is too big, it has been set to grid_size: " << this->grid_size << std::endl;
-	}
-	this->max_velocity = max_velocity;
-}
-
-void Settings::set_grid_size(unsigned int grid_size)
+void Settings::set_grid_size(float grid_size)
 {
 	if (grid_size < this->width || grid_size < this->height)
 	{
-		grid_size = std::max(this->width, this->height);
+		grid_size = float(std::max(this->width, this->height));
 		std::cerr << "Grid size is too small, it has been set to " << grid_size << std::endl;
 	}
 	else if (grid_size > INT_MAX)
 	{
-		grid_size = INT_MAX;
+		grid_size = float(INT_MAX);
 		std::cerr << "Grid size is too big, it has been set to INT_MAX." << std::endl;
 	}
 	this->grid_size = grid_size;
@@ -375,19 +376,59 @@ void Settings::set_fps_limit(unsigned int fps_limit)
 	this->fps_limit = fps_limit;
 }
 
-void Settings::set_friction_coefficient(int friction_coefficient)
+void Settings::set_friction_coefficient(float friction_coefficient)
 {
-	if (friction_coefficient < 0)
+	if (friction_coefficient < 0.f)
 	{
 		friction_coefficient = 0;
 		std::cerr << "Friction coefficient cannot be negative (maybe later, that could be fun)." << std::endl;
 	}
-	else if (friction_coefficient > 100)
+	else if (friction_coefficient > 1.f)
 	{
-		friction_coefficient = 100;
+		friction_coefficient = 1.f;
 		std::cerr << "Friction coefficient is too big, it has been set to 100%." << std::endl;
 	}
 	this->friction_coefficient = friction_coefficient;
+}
+
+void Settings::set_delta_t(float delta_time)
+{
+	if (delta_time < 0.0f)
+	{
+		delta_time = 0.0f;
+		std::cerr << "Delta time cannot be negative." << std::endl;
+	}
+	else if (delta_time > 1.0f)
+	{
+		delta_time = 1.0f;
+		std::cerr << "Delta time is too big, it has been set to 1.0." << std::endl;
+	}
+	this->delta_t = delta_time;
+}
+
+void Settings::set_boundary_limit(float boundary_limit)
+{
+	if (boundary_limit < 0.f)
+	{
+		boundary_limit = 0.f;
+		std::cerr << "Boundary limit cannot be negative." << std::endl;
+	}
+	else if (boundary_limit > 1.f)
+	{
+		boundary_limit = 1.f;
+		std::cerr << "Boundary limit is too big, it has been set to 100%." << std::endl;
+	}
+	this->boundary_limit = boundary_limit;
+}
+
+void Settings::set_max_range(float max_range)
+{
+	if (max_range < 0.f)
+	{
+		max_range = 0.f;
+		std::cerr << "Max range cannot be negative." << std::endl;
+	}
+	this->max_range = std::pow(max_range, 2); // Setting the max range to the square of the value to avoid sqrt() in the distance calculation
 }
 
 // Getters
@@ -421,17 +462,12 @@ unsigned int Settings::get_particle_number() const
 	return this->particle_number;
 }
 
-unsigned int Settings::get_max_acceleration() const
+float Settings::get_force_factor() const
 {
-	return this->max_acceleration;
+	return this->force_factor;
 }
 
-unsigned int Settings::get_max_velocity() const
-{
-	return this->max_velocity;
-}
-
-unsigned int Settings::get_grid_size() const
+float Settings::get_grid_size() const
 {
 	return this->grid_size;
 }
@@ -456,9 +492,24 @@ unsigned int Settings::get_fps_limit() const
 	return this->fps_limit;
 }
 
-int Settings::get_friction_coefficient() const
+float Settings::get_friction_coefficient() const
 {
 	return this->friction_coefficient;
+}
+
+float Settings::get_delta_t() const
+{
+	return this->delta_t;
+}
+
+float Settings::get_boundary_limit() const
+{
+	return this->boundary_limit;
+}
+
+float Settings::get_max_range() const
+{
+	return this->max_range;
 }
 
 /* ************************************************************************** */

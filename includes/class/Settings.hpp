@@ -37,11 +37,13 @@ public:
 	unsigned int get_antialiasing_level() const;
 	float get_particle_size() const;
 	unsigned int get_particle_number() const;
-	unsigned int get_max_acceleration() const;
-	unsigned int get_max_velocity() const;
-	unsigned int get_grid_size() const;
+	float get_force_factor() const;
+	float get_grid_size() const;
 	unsigned int get_fps_limit() const;
-	int get_friction_coefficient() const;
+	float get_friction_coefficient() const;
+	float get_delta_t() const;
+	float get_boundary_limit() const;
+	float get_max_range() const;
 	std::vector<particle_type> get_types() const;
 	std::vector<std::vector<float>> get_interactions() const;
 	std::vector<Particle> get_particles() const;
@@ -53,11 +55,13 @@ public:
 	void set_antialiasing_level(unsigned int antialiasing_level);
 	void set_particle_size(float particle_size);
 	void set_particle_number(unsigned int particle_number);
-	void set_max_acceleration(unsigned int max_acceleration);
-	void set_max_velocity(unsigned int max_velocity);
-	void set_grid_size(unsigned int grid_size);
+	void set_force_factor(float force_factor);
+	void set_grid_size(float grid_size);
 	void set_fps_limit(unsigned int framerate_limit);
-	void set_friction_coefficient(int friction_coefficient);
+	void set_friction_coefficient(float friction_coefficient);
+	void set_delta_t(float delta_t);
+	void set_boundary_limit(float boundary_limit);
+	void set_max_range(float max_range);
 
 private:
 	void init_simulation(std::vector<particle_type> &types, std::vector<std::vector<float>> &interactions, std::vector<Particle> &particles);
@@ -73,10 +77,12 @@ private:
 	// Simulation settings
 	float particle_size;
 	unsigned int particle_number;
-	unsigned int max_acceleration;
-	unsigned int max_velocity;
-	unsigned int grid_size; // This is the size of the subgrid used simulate particles.
-	int friction_coefficient;
+	float force_factor;
+	float grid_size; // This is the size of the subgrid used simulate particles.
+	float friction_coefficient;
+	float delta_t;		  // This is the time between two physical frames.
+	float boundary_limit; // This is the ratio of the distance between two particles over maximum range at which they repell
+	float max_range;	  // This is the maximum range at which two particles interact
 
 	// Particles interactions
 	std::vector<particle_type> types;
