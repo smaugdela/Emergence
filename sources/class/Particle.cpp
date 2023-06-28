@@ -23,8 +23,9 @@ Particle::Particle(const particle_type type)
 	// _x = read_urandom<int>() % my_settings.get_grid_size();
 	// _y = read_urandom<int>() % my_settings.get_grid_size();
 
-	_x = rand() % my_settings.get_grid_size();
-	_y = rand() % my_settings.get_grid_size();
+	int limit = int(my_settings.get_grid_size());
+	_x = rand() % limit;
+	_y = rand() % limit;
 
 	_future_x = _x;
 	_future_y = _y;
@@ -78,9 +79,7 @@ void Particle::compute()
 	_future_vx = _vx;
 	_future_vy = _vy;
 
-	// Update the particle velocity
-	// _future_vx += rand() % my_settings.get_max_acceleration() * (rand() % 2 ? 1 : -1);
-	// _future_vy += rand() % my_settings.get_max_acceleration() * (rand() % 2 ? 1 : -1);
+	float ax, ay = 0.f;
 
 	// Update the particle velocity using actual interaction equation
 	for (size_t i = 0; i < my_settings.get_particles().size(); i++)
@@ -89,51 +88,24 @@ void Particle::compute()
 		if (&particleB == this)
 			continue;
 
-		unsigned int distance = std::sqrt(std::pow(particleB._x - _x, 2) + std::pow(particleB._y - _y, 2));
-
-		if (distance == 0)
-			continue;
-
-		// Check if the particles are too close, and as such repell each other
-		if (distance <= my_settings.get_particle_size() * 2)
-		{
-			unsigned int force = my_settings.get_max_acceleration() / distance;
-
-			// Compute the interaction angle
-			double angle = std::atan2(particleB._y - _y, particleB._x - _x);
-
-			// Update the particle velocity
-			_future_vx += -1.0 * static_cast<double>(force) * std::cos(angle);
-			_future_vy += -1.0 * static_cast<double>(force) * std::sin(angle);
-			continue;
-		}
-
-		// Check if the particles are close enough to interact
-		if (distance > my_settings.get_grid_size() / 2)
-			continue;
+		float distance = std::pow(particleB._x - _x, 2) + std::pow(particleB._y - _y, 2);
 
 		// Compute the interaction force
-		unsigned int force = my_settings.get_max_acceleration() / distance;
+		float f = force(distance, my_settings.get_interactions()[_type.id][particleB._type.id]);
 
 		// Compute the interaction angle
 		double angle = std::atan2(particleB._y - _y, particleB._x - _x);
 
 		// Update the particle velocity
-		_future_vx += static_cast<double>(force) * std::cos(angle) * my_settings.get_interactions()[_type.id][particleB._type.id];
-		_future_vy += static_cast<double>(force) * std::sin(angle) * my_settings.get_interactions()[_type.id][particleB._type.id];
+		ax += f * std::cos(angle);
+		ay += f * std::sin(angle);
 
 		// std::cout << "force: " << force << "angle: " << angle << "cos(angle): " << std::cos(angle) << "sin(angle): " << std::sin(angle) << "interaction factor" << my_settings.get_interactions()[_type.id][particleB._type.id] << std::endl;
 	}
 
-	// Check velocity limits
-	// if (static_cast<unsigned int>(std::abs(_future_vx)) > my_settings.get_max_velocity())
-	// 	_future_vx = my_settings.get_max_velocity();
-	// if (static_cast<unsigned int>(std::abs(_future_vy)) > my_settings.get_max_velocity())
-	// 	_future_vy = my_settings.get_max_velocity();
-
 	// Check friction and update velocity
-	_future_vx = (_future_vx * (100 - my_settings.get_friction_coefficient())) / 100;
-	_future_vy = (_future_vy * (100 - my_settings.get_friction_coefficient())) / 100;
+	_future_vx = (_future_vx * (1 - my_settings.get_friction_coefficient())) + (ax * my_settings.get_delta_t());
+	_future_vy = (_future_vy * (1 - my_settings.get_friction_coefficient())) + (ay * my_settings.get_delta_t());
 
 	// Check wall collision
 	if (_future_x + _future_vx < 0 || _future_x + _future_vx > static_cast<int>(my_settings.get_grid_size()))
@@ -144,16 +116,6 @@ void Particle::compute()
 	// Update the future particle position
 	_future_x += _future_vx;
 	_future_y += _future_vy;
-
-	// Check wall collision and teleport to the other side (continuous space)
-	// if (_future_x < 0)
-	// 	_future_x = my_settings.get_grid_size() - 1;
-	// if (_future_x > static_cast<int>(my_settings.get_grid_size()))
-	// 	_future_x = 0;
-	// if (_future_y < 0)
-	// 	_future_y = my_settings.get_grid_size() - 1;
-	// if (_future_y > static_cast<int>(my_settings.get_grid_size()))
-	// 	_future_y = 0;
 }
 
 void Particle::update()
@@ -170,8 +132,8 @@ void Particle::draw(sf::RenderWindow &window) const
 
 	// Need to transform the particle coordinates to the window coordinates
 	float X, Y;
-	X = ((float)_x / (float)my_settings.get_grid_size()) * (float)my_settings.get_width();
-	Y = ((float)_y / (float)my_settings.get_grid_size()) * (float)my_settings.get_height();
+	X = (_x / my_settings.get_grid_size()) * my_settings.get_width();
+	Y = (_y / my_settings.get_grid_size()) * my_settings.get_height();
 	shape.setPosition(X, Y);
 
 	shape.setFillColor(_type.color);

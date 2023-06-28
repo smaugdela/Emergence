@@ -8,13 +8,15 @@
 #define TITLE "Emergence"
 #define ANTIALIASING_LEVEL 4
 #define PARTICLE_RADIUS 3.0f
-#define PARTICLE_NUMBER 100
-#define MAX_ACCELERATION 1000 // Which is also the base value for the force
-#define MAX_VELOCITY 1000
+#define PARTICLE_NUMBER 50
+#define FORCE_FACTOR 100.0f
 #define FPS_LIMIT 0
-#define FRICTION_COEFFICIENT 10 // in percentage (0% - 100%)
+#define FRICTION_COEFFICIENT 0.1f
+#define DELTA_T 0.02f
+#define BOUNDARY_LIMIT 0.3f
+#define MAX_RANGE 10.f
 
 // #define GRID_SIZE 100000
-#define GRID_MULTIPLIER 1
+#define GRID_MULTIPLIER 2
 
 #endif

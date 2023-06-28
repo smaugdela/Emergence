@@ -32,14 +32,14 @@ public:
 	void draw(sf::RenderWindow &window) const;
 
 private:
-	int _x;
-	int _y;
-	int _vx;
-	int _vy;
-	int _future_x;
-	int _future_y;
-	int _future_vx;
-	int _future_vy;
+	float _x;
+	float _y;
+	float _vx;
+	float _vy;
+	float _future_x;
+	float _future_y;
+	float _future_vx;
+	float _future_vy;
 	particle_type _type;
 };
 

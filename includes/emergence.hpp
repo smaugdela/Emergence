@@ -5,7 +5,6 @@
 
 #include "class/Settings.hpp"
 #include "class/Particle.hpp"
-#include "class/Myrand.hpp"
 
 #include "json.hpp"
 using json = nlohmann::json;
@@ -29,5 +28,6 @@ extern Settings my_settings;
 int loop(sf::RenderWindow &window);
 void init_simulation(std::vector<particle_type> &types, std::vector<std::vector<int>> &interactions);
 void fps_counter(sf::RenderWindow &window, std::string fps);
+float force(float r, float relation_coefficient);
 
 #endif

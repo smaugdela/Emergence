@@ -6,7 +6,7 @@
 #    By: smagdela <smagdela@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/09 14:22:11 by smagdela          #+#    #+#              #
-#    Updated: 2023/06/23 19:18:37 by smagdela         ###   ########.fr        #
+#    Updated: 2023/06/28 12:14:09 by smagdela         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,11 +24,11 @@ INCS    = 	emergence.hpp \
 			json.hpp \
 			class/Particle.hpp \
 			class/Settings.hpp \
-			class/Myrand.hpp \
 
 SRCS    =	main.cpp \
 			loop.cpp \
 			fps.cpp \
+			force.cpp \
 			class/Particle.cpp \
 			class/Settings.cpp \
 
@@ -42,8 +42,8 @@ INCS    :=      ${addprefix ${INCD},${INCS}}
 OBJS    :=      ${addprefix ${OBJD},${OBJS}}
 SRCS    :=      ${addprefix ${SRCD},${SRCS}}
 
-CXX             =       c++
-CXXFLAGS        =       -g -Wall -Wextra -Werror -lsfml-graphics -lsfml-window -lsfml-system
+CXX             =		c++
+CXXFLAGS        =		-Wall -Wextra -Werror -lsfml-graphics -lsfml-window -lsfml-system
 
 #################
 #       Fancy Stuff     #
