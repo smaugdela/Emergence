@@ -6,7 +6,7 @@
 #    By: smagdela <smagdela@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/09 14:22:11 by smagdela          #+#    #+#              #
-#    Updated: 2023/06/28 12:14:09 by smagdela         ###   ########.fr        #
+#    Updated: 2023/07/03 14:54:41 by smagdela         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,7 +43,7 @@ OBJS    :=      ${addprefix ${OBJD},${OBJS}}
 SRCS    :=      ${addprefix ${SRCD},${SRCS}}
 
 CXX             =		c++
-CXXFLAGS        =		-Wall -Wextra -Werror -lsfml-graphics -lsfml-window -lsfml-system
+CXXFLAGS        =		-g3 -Wall -Wextra -Werror -lsfml-graphics -lsfml-window -lsfml-system
 
 #################
 #       Fancy Stuff     #

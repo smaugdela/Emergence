@@ -26,9 +26,6 @@ public:
 	// void add_type(particle_type type);
 	// void save_to_json(std::string filename);
 	void load_from_json(json json_settings);
-	void compute_particles(void);
-	void update_particles(void);
-	void draw_particles(sf::RenderWindow &window) const;
 
 	// Getters
 	unsigned int get_width() const;
@@ -46,7 +43,7 @@ public:
 	float get_max_range() const;
 	std::vector<particle_type> get_types() const;
 	std::vector<std::vector<float>> get_interactions() const;
-	std::vector<Particle> get_particles() const;
+	std::vector<Particle *> get_particles() const;
 
 	// Setters
 	void set_width(unsigned int width);
@@ -64,7 +61,7 @@ public:
 	void set_max_range(float max_range);
 
 private:
-	void init_simulation(std::vector<particle_type> &types, std::vector<std::vector<float>> &interactions, std::vector<Particle> &particles);
+	void init_simulation(std::vector<particle_type> &types, std::vector<std::vector<float>> &interactions, std::vector<Particle *> &particles);
 
 	// Window settings
 	unsigned int width;
@@ -83,11 +80,6 @@ private:
 	float delta_t;		  // This is the time between two physical frames.
 	float boundary_limit; // This is the ratio of the distance between two particles over maximum range at which they repell
 	float max_range;	  // This is the maximum range at which two particles interact
-
-	// Particles interactions
-	std::vector<particle_type> types;
-	std::vector<std::vector<float>> interactions;
-	std::vector<Particle> particles;
 };
 
 std::ostream &operator<<(std::ostream &o, Settings const &i);

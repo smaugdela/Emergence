@@ -50,59 +50,6 @@ Settings::Settings()
 
 	max_range = MAX_RANGE;
 	this->set_max_range(max_range);
-
-	// Initialize the types, interactions and particles vectors
-	init_simulation(this->types, this->interactions, this->particles);
-}
-
-void Settings::init_simulation(std::vector<particle_type> &types, std::vector<std::vector<float>> &interactions, std::vector<Particle> &particles)
-{
-	// Initialize the types vector
-	// Hardcoded for the moment
-	particle_type type;
-	type.id = 0;
-	type.color = sf::Color::Blue;
-	type.amount = this->get_particle_number();
-	types.push_back(type);
-
-	// type.id = 1;
-	// type.color = sf::Color::Green;
-	// type.amount = this->get_particle_number() / 3;
-	// types.push_back(type);
-
-	// type.id = 2;
-	// type.color = sf::Color::Red;
-	// type.amount = this->get_particle_number() / 3;
-	// types.push_back(type);
-
-	// Initialize the interactions vector
-	// Hardcoded for the moment
-	// Matrix looking like this:
-	// 0 0.5 1
-	// 0.5 0 1
-	// 1 1 0
-	std::vector<float> interaction;
-	interaction.push_back(-1.f);
-	// interaction.push_back(0.5f);
-	// interaction.push_back(1.0f);
-	interactions.push_back(interaction);
-	// interaction.clear();
-	// interaction.push_back(0.5f);
-	// interaction.push_back(0.0f);
-	// interaction.push_back(1.0f);
-	// interactions.push_back(interaction);
-	// interaction.clear();
-	// interaction.push_back(1.0f);
-	// interaction.push_back(1.0f);
-	// interaction.push_back(0.0f);
-	// interactions.push_back(interaction);
-
-	// Initialize the particles vector
-	for (size_t i = 0; i < this->types.size(); i++)
-	{
-		for (size_t j = 0; j < this->types[i].amount; j++)
-			particles.push_back(Particle(types[i]));
-	}
 }
 
 Settings::Settings(const Settings &src)
@@ -135,8 +82,6 @@ Settings &Settings::operator=(Settings const &rhs)
 		this->force_factor = rhs.force_factor;
 		this->grid_size = rhs.grid_size;
 		this->fps_limit = rhs.fps_limit;
-		this->types = rhs.types;
-		this->interactions = rhs.interactions;
 		this->friction_coefficient = rhs.friction_coefficient;
 		this->delta_t = rhs.delta_t;
 		this->boundary_limit = rhs.boundary_limit;
@@ -160,17 +105,6 @@ std::ostream &operator<<(std::ostream &o, Settings const &i)
 	o << "Delta t: " << i.get_delta_t() << std::endl;
 	o << "Boundary limit: " << i.get_boundary_limit() << std::endl;
 	o << "Max range: " << i.get_max_range() << std::endl;
-	o << "Types: ";
-	for (auto type : i.get_types())
-		o << "id: " << type.id;
-	o << std::endl;
-	o << "Interactions: ";
-	for (auto interaction : i.get_interactions())
-	{
-		for (auto type : interaction)
-			o << type << " ";
-		o << std::endl;
-	}
 	return o;
 }
 
@@ -219,35 +153,6 @@ void Settings::load_from_json(json json_settings)
 
 	if (json_settings.contains("max_range"))
 		this->set_max_range(json_settings["max_range"]);
-}
-
-void Settings::compute_particles()
-{
-	// Update the particles
-	for (size_t i = 0; i < particles.size(); i++)
-	{
-		// Update the acceleration
-		this->particles[i].compute();
-	}
-}
-
-void Settings::update_particles()
-{
-	// Update the particles
-	for (size_t i = 0; i < particles.size(); i++)
-	{
-		// Update the acceleration
-		this->particles[i].update();
-	}
-}
-
-void Settings::draw_particles(sf::RenderWindow &window) const
-{
-	// Draw the particles
-	for (size_t i = 0; i < particles.size(); i++)
-	{
-		this->particles[i].draw(window);
-	}
 }
 
 /*
@@ -470,21 +375,6 @@ float Settings::get_force_factor() const
 float Settings::get_grid_size() const
 {
 	return this->grid_size;
-}
-
-std::vector<particle_type> Settings::get_types() const
-{
-	return this->types;
-}
-
-std::vector<std::vector<float>> Settings::get_interactions() const
-{
-	return this->interactions;
-}
-
-std::vector<Particle> Settings::get_particles() const
-{
-	return this->particles;
 }
 
 unsigned int Settings::get_fps_limit() const
