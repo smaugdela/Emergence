@@ -35,12 +35,16 @@ public:
 private:
 	float _x;
 	float _y;
+	float _z;
 	float _vx;
 	float _vy;
+	float _vz;
 	float _future_x;
 	float _future_y;
+	float _future_z;
 	float _future_vx;
 	float _future_vy;
+	float _future_vz;
 	size_t _id;
 	particle_type _type;
 };

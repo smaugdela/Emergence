@@ -10,6 +10,7 @@ Settings::Settings()
 	unsigned int width, height, antialiasing_level, particle_number;
 	std::string title;
 	float particle_size, force_factor, grid_size, friction_coefficient, delta_t, boundary_limit, max_range;
+	bool _3d;
 
 	width = WIDTH;
 	this->set_width(width);
@@ -50,6 +51,9 @@ Settings::Settings()
 
 	max_range = MAX_RANGE;
 	this->set_max_range(max_range);
+
+	_3d = _3D;
+	this->set_3d(_3d);
 }
 
 Settings::Settings(const Settings &src)
@@ -86,6 +90,7 @@ Settings &Settings::operator=(Settings const &rhs)
 		this->delta_t = rhs.delta_t;
 		this->boundary_limit = rhs.boundary_limit;
 		this->max_range = rhs.max_range;
+		this->_3d = rhs._3d;
 	}
 	return *this;
 }
@@ -105,6 +110,7 @@ std::ostream &operator<<(std::ostream &o, Settings const &i)
 	o << "Delta t: " << i.get_delta_t() << std::endl;
 	o << "Boundary limit: " << i.get_boundary_limit() << std::endl;
 	o << "Max range: " << i.get_max_range() << std::endl;
+	o << "3D: " << i.get_3d() << std::endl;
 	return o;
 }
 
@@ -153,6 +159,9 @@ void Settings::load_from_json(json json_settings)
 
 	if (json_settings.contains("max_range"))
 		this->set_max_range(json_settings["max_range"]);
+
+	if (json_settings.contains("3D"))
+		this->set_3d(json_settings["3D"]);
 }
 
 /*
@@ -336,6 +345,11 @@ void Settings::set_max_range(float max_range)
 	this->max_range = std::pow(max_range, 2); // Setting the max range to the square of the value to avoid sqrt() in the distance calculation
 }
 
+void Settings::set_3d(bool is_3d)
+{
+	this->_3d = is_3d;
+}
+
 // Getters
 unsigned int Settings::get_width() const
 {
@@ -400,6 +414,11 @@ float Settings::get_boundary_limit() const
 float Settings::get_max_range() const
 {
 	return this->max_range;
+}
+
+bool Settings::get_3d() const
+{
+	return this->_3d;
 }
 
 /* ************************************************************************** */

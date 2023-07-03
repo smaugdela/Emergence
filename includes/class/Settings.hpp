@@ -41,9 +41,7 @@ public:
 	float get_delta_t() const;
 	float get_boundary_limit() const;
 	float get_max_range() const;
-	std::vector<particle_type> get_types() const;
-	std::vector<std::vector<float>> get_interactions() const;
-	std::vector<Particle *> get_particles() const;
+	bool get_3d() const;
 
 	// Setters
 	void set_width(unsigned int width);
@@ -59,6 +57,7 @@ public:
 	void set_delta_t(float delta_t);
 	void set_boundary_limit(float boundary_limit);
 	void set_max_range(float max_range);
+	void set_3d(bool _3d);
 
 private:
 	void init_simulation(std::vector<particle_type> &types, std::vector<std::vector<float>> &interactions, std::vector<Particle *> &particles);
@@ -80,6 +79,7 @@ private:
 	float delta_t;		  // This is the time between two physical frames.
 	float boundary_limit; // This is the ratio of the distance between two particles over maximum range at which they repell
 	float max_range;	  // This is the maximum range at which two particles interact
+	bool _3d;
 };
 
 std::ostream &operator<<(std::ostream &o, Settings const &i);
