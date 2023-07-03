@@ -1,11 +1,51 @@
 {
-	"width": 1000,
+	"width": 1500,
 	"height": 1000,
 	"title": "Emergence",
 	"antialiasing_level": 4,
-	"particle_size": 3.0,
-	"force_factor": 1000,
-	"fps_limit": 0,
-	"friction_coefficient": 0.1,
-	"grid_size": 1000
+	"particle_size": 2.0,
+	"force_factor": 80,
+	"friction_coefficient": 0.2,
+	"boundary_limit": 0.1,
+	"max_range": 100,
+	"types": [
+		{
+			"id": 0,
+			"color": [
+				150,
+				200,
+				0
+			],
+			"amount": 250
+		},
+		{
+			"id": 1,
+			"color": [
+				200,
+				0,
+				150
+			],
+			"amount": 250
+		},
+		{
+			"id": 2,
+			"color": [
+				200,
+				150,
+				0
+			],
+			"amount": 250
+		}
+	],
+	"interactions": [
+		-0.1,
+		0.3,
+		0.0,
+		0.0,
+		-0.1,
+		0.3,
+		0.3,
+		0.0,
+		-0.1
+	]
 }

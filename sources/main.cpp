@@ -6,6 +6,7 @@ int main(int ac, char **av)
 {
 
 	// Parse input arguments
+	json json_settings;
 	if (ac > 2)
 	{
 		std::cerr << "Usage: ./emergence [settings.json]" << std::endl;
@@ -27,7 +28,7 @@ int main(int ac, char **av)
 			std::cerr << "Error: could not open file " << av[1] << std::endl;
 			return EXIT_FAILURE;
 		}
-		json json_settings = json::parse(json_file);
+		json_settings = json::parse(json_file);
 		my_settings.load_from_json(json_settings);
 	}
 
@@ -41,5 +42,5 @@ int main(int ac, char **av)
 	// Create the window
 	sf::RenderWindow window(sf::VideoMode(my_settings.get_width(), my_settings.get_height()), my_settings.get_title(), sf::Style::Default, sfml_settings);
 
-	return loop(window);
+	return loop(window, json_settings);
 }

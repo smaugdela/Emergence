@@ -30,7 +30,7 @@ Settings::Settings()
 	this->set_particle_number(particle_number);
 
 	// grid_size = GRID_SIZE;
-	grid_size = std::max(width, height) * GRID_MULTIPLIER;
+	grid_size = ((width + height) / 2) * GRID_MULTIPLIER;
 	this->set_grid_size(grid_size);
 
 	force_factor = FORCE_FACTOR;
@@ -257,7 +257,7 @@ void Settings::set_force_factor(float force_factor)
 
 void Settings::set_grid_size(float grid_size)
 {
-	if (grid_size < this->width || grid_size < this->height)
+	if (grid_size < 1.0f)
 	{
 		grid_size = float(std::max(this->width, this->height));
 		std::cerr << "Grid size is too small, it has been set to " << grid_size << std::endl;

@@ -1,54 +1,62 @@
 #include "emergence.hpp"
 
-static void init_simulation(std::vector<particle_type> &types, std::vector<std::vector<float>> &interactions, std::vector<Particle *> &particles)
+static void init_simulation(json file, std::vector<particle_type> &types, std::vector<std::vector<float>> &interactions, std::vector<Particle *> &particles)
 {
-	// Initialize the types vector
-	// Hardcoded for the moment
-	particle_type type;
-	type.id = 0;
-	type.color = sf::Color::Blue;
-	type.amount = my_settings.get_particle_number();
-	types.push_back(type);
-
-	// type.id = 1;
-	// type.color = sf::Color::Green;
-	// type.amount = this->get_particle_number() / 3;
-	// types.push_back(type);
-
-	// type.id = 2;
-	// type.color = sf::Color::Red;
-	// type.amount = this->get_particle_number() / 3;
-	// types.push_back(type);
-
-	// Initialize the interactions vector
-	// Hardcoded for the moment
-	// Matrix looking like this:
-	// 0 0.5 1
-	// 0.5 0 1
-	// 1 1 0
-	std::vector<float> interaction;
-	interaction.push_back(0.2f);
-	// interaction.push_back(0.5f);
-	// interaction.push_back(1.0f);
-	interactions.push_back(interaction);
-	// interaction.clear();
-	// interaction.push_back(0.5f);
-	// interaction.push_back(0.0f);
-	// interaction.push_back(1.0f);
-	// interactions.push_back(interaction);
-	// interaction.clear();
-	// interaction.push_back(1.0f);
-	// interaction.push_back(1.0f);
-	// interaction.push_back(0.0f);
-	// interactions.push_back(interaction);
-
-	// Initialize the particles vector
-	size_t id = 0;
-	for (size_t i = 0; i < types.size(); i++)
+	// Read the settings file to initialize the types vector
+	if (file.contains("types"))
 	{
-		for (size_t j = 0; j < types[i].amount; j++)
+		for (auto &type : file["types"])
 		{
-			particles.push_back(new Particle(types[i], id));
+			particle_type new_type;
+			new_type.id = type["id"];
+			new_type.color = sf::Color(type["color"][0], type["color"][1], type["color"][2]);
+			new_type.amount = type["amount"];
+			types.push_back(new_type);
+		}
+	}
+
+	// Read the settings file to initialize the interactions vector
+	if (file.contains("interactions"))
+	{
+		std::vector<float> new_interactions = file["interactions"];
+		if (new_interactions.size() != types.size() * types.size())
+		{
+			std::cerr << "Error: the number of interactions must be equal to the number of types" << std::endl;
+			exit(EXIT_FAILURE);
+		}
+		for (size_t i = 0; i < types.size(); i++)
+		{
+			std::vector<float> interaction;
+			for (size_t j = 0; j < types.size(); j++)
+			{
+				interaction.push_back(new_interactions[i * types.size() + j]);
+			}
+			interactions.push_back(interaction);
+		}
+	}
+
+	if (types.size() == 0)
+	{
+		std::cout << "No file found, initializing with default values" << std::endl;
+		particle_type type;
+		type.id = 0;
+		type.color = sf::Color::Blue;
+		type.amount = my_settings.get_particle_number();
+		types.push_back(type);
+
+		std::vector<float> interaction;
+		interaction.push_back(1.0f);
+		interactions.push_back(interaction);
+	}
+
+	// Initialize particles vector from types vector
+	size_t id = 0;
+	for (auto &type : types)
+	{
+		for (size_t i = 0; i < type.amount; i++)
+		{
+			Particle *particle = new Particle(type, id);
+			particles.push_back(particle);
 			++id;
 		}
 	}
@@ -83,7 +91,7 @@ static void draw_particles(sf::RenderWindow &window, std::vector<Particle *> &pa
 	}
 }
 
-int loop(sf::RenderWindow &window)
+int loop(sf::RenderWindow &window, json file)
 {
 	sf::Clock clock;
 	float last_time = 0;
@@ -93,13 +101,11 @@ int loop(sf::RenderWindow &window)
 	std::vector<std::vector<float>> interactions;
 	std::vector<Particle *> particles;
 
-	init_simulation(types, interactions, particles);
+	init_simulation(file, types, interactions, particles);
 
 	// Compute mean fps
 	size_t iteration = 0;
 	float delta_t_sum = 0;
-	// size_t fps = 0;
-	// std::string str_fps;
 
 	while (window.isOpen())
 	{

@@ -11,3 +11,4 @@ Trying to demonstrate emergence phenomenon through a simple graphical side-proje
 - [ ] Add mouse cursor interaction (repulsive/attractive force, generate/delete particles).
 - [ ] Add fake 3D using a 3rd dimension in coordinates computations and a fake depth effect affecting particle size and bluriness.
 - [ ] Add proceduraly generated sound/music in relation to particle behavior
+- [ ] Take into account the fact that the simulation area may not be squared (width != height), implement a grid_height and grid_widt.h
