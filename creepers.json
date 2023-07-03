@@ -4,48 +4,48 @@
 	"title": "Emergence",
 	"antialiasing_level": 4,
 	"particle_size": 2.0,
-	"force_factor": 50,
-	"friction_coefficient": 0.0005,
+	"force_factor": 80,
+	"friction_coefficient": 0.35,
 	"boundary_limit": 0.1,
-	"max_range": 150,
+	"max_range": 100,
 	"types": [
 		{
 			"id": 0,
 			"color": [
-				50,
-				50,
-				150
+				242,
+				216,
+				216
 			],
-			"amount": 80
+			"amount": 200
 		},
 		{
 			"id": 1,
 			"color": [
-				10,
-				150,
-				50
+				92,
+				137,
+				132
 			],
-			"amount": 80
+			"amount": 200
 		},
 		{
 			"id": 2,
 			"color": [
-				20,
+				55,
 				66,
-				255
+				89
 			],
 			"amount": 200
 		}
 	],
 	"interactions": [
-		-0.3,
-		0.5,
-		0.4,
-		0.5,
-		0.2,
+		-0.1,
+		0.3,
 		0.0,
-		0.4,
 		0.0,
-		-0.4
+		-0.1,
+		0.3,
+		0.3,
+		0.0,
+		-0.1
 	]
 }
