@@ -133,6 +133,12 @@ int loop(sf::RenderWindow &window)
 		window.display();
 	}
 
+	// Free memory
+	for (size_t i = 0; i < particles.size(); i++)
+	{
+		delete particles[i];
+	}
+
 	// Print mean fps
 	std::cout << "Mean fps: " << 1.0f / (delta_t_sum / float(iteration)) << std::endl;
 
