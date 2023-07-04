@@ -27,6 +27,7 @@ void gui(std::vector<particle_type> &types, std::vector<std::vector<float>> &int
 			ImGui::Text("id: %li", item.id);
 			ImGui::SameLine();
 			ImGui::Text("amount: %li", item.amount);
+			// ImGui::SliderInt("amount", &item.amount, 0, 100);
 			ImGui::PopStyleVar();
 		}
 	}
@@ -35,14 +36,13 @@ void gui(std::vector<particle_type> &types, std::vector<std::vector<float>> &int
 	{
 
 		// First print the type families
-
 		for (const auto &item : types)
 		{
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 80);
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
 			ImGui::Text("%li", item.id);
 			ImGui::SameLine();
-			ImGui::ColorButton(std::to_string(item.id).c_str(), ImVec4(item.color.r / 255.0f, item.color.g / 255.0f, item.color.b / 255.0f, 255.0f), ImGuiColorEditFlags_NoPicker);
+			ImGui::ColorButton(" ", ImVec4(item.color.r / 255.0f, item.color.g / 255.0f, item.color.b / 255.0f, 255.0f), ImGuiColorEditFlags_NoPicker);
 			ImGui::SameLine();
 			ImGui::PopStyleVar();
 		}
@@ -57,22 +57,13 @@ void gui(std::vector<particle_type> &types, std::vector<std::vector<float>> &int
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
 			ImGui::Text("%li", types[j].id);
 			ImGui::SameLine();
-			ImGui::ColorButton(std::to_string(types[j].id).c_str(), ImVec4(types[j].color.r / 255.0f, types[j].color.g / 255.0f, types[j].color.b / 255.0f, 255.0f), ImGuiColorEditFlags_NoPicker);
+			ImGui::ColorButton(" ", ImVec4(types[j].color.r / 255.0f, types[j].color.g / 255.0f, types[j].color.b / 255.0f, 255.0f), ImGuiColorEditFlags_NoPicker);
 			ImGui::SameLine();
 			ImGui::PopStyleVar();
 
 			for (auto &item : row)
 			{
-				// Convert the float item to string
-				// std::string item_str;
-				// if (item >= 0.f)
-				// 	item_str = std::to_string(item).substr(0, 4);
-				// else
-				// 	item_str = std::to_string(item).substr(0, 5);
-
 				ImGui::PushItemWidth(100);
-				// ImGui::Button(item_str.c_str(), ImVec2(50, 50));
-				// ImGui::SliderFloat(" ", &item, -1.0f, 1.0f, "%.2f");
 				ImGui::SliderFloat(std::to_string(i).c_str(), &item, -1.0f, 1.0f, "%.2f");
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
@@ -81,8 +72,6 @@ void gui(std::vector<particle_type> &types, std::vector<std::vector<float>> &int
 			ImGui::NewLine();
 			++j;
 		}
-
-		// ImGui::PopStyleVar(3); // Pop the style variables
 	}
 
 	ImGui::End();
