@@ -6,7 +6,7 @@
 #    By: smagdela <smagdela@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/09 14:22:11 by smagdela          #+#    #+#              #
-#    Updated: 2023/07/03 20:07:28 by smagdela         ###   ########.fr        #
+#    Updated: 2023/07/04 10:16:50 by smagdela         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,7 +43,7 @@ OBJS    :=      ${addprefix ${OBJD},${OBJS}}
 SRCS    :=      ${addprefix ${SRCD},${SRCS}}
 
 CXX             =		c++
-CXXFLAGS        =		-O3 -Wall -Wextra -Werror -lsfml-graphics -lsfml-window -lsfml-system
+CXXFLAGS        =		-Wall -Wextra -Werror -lsfml-graphics -lsfml-window -lsfml-system
 
 #################
 #       Fancy Stuff     #
@@ -88,12 +88,19 @@ ${OBJD}%.o:     ${SRCD}%.cpp
 		@mkdir -p ${OBJD}
 		@mkdir -p ${OBJD}/class
 		@mkdir -p ${OBJD}/commands
-		@${CXX} ${CXXFLAGS} -c -o $@ -I${INCD} $<
+		@${CXX} ${CXXFLAGS} -O3 -c -o $@ -I${INCD} $<
 		@echo '✔ Object file built!'
 
 ${NAME}: ${OBJS}
 		@echo '➤ Compiling $@...'
-		@${CXX} ${CXXFLAGS} ${OBJS} -o ${NAME}
+		@${CXX} ${CXXFLAGS} -g3 ${OBJS} -o ${NAME}
+		@echo '✔ Binary available!'
+
+dev:	all
+
+opti:	${OBJS}
+		@echo '➤ Compiling $@...'
+		@${CXX} ${CXXFLAGS} -O3 ${OBJS} -o ${NAME}
 		@echo '✔ Binary available!'
 
 clean:

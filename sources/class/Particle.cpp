@@ -104,15 +104,9 @@ void Particle::compute(std::vector<Particle *> &particles, std::vector<std::vect
 		if (*this == *particleB)
 			continue;
 
-		float distance, dx, dy, dz;
-		dx = particleB->_x - _x;
-		dy = particleB->_y - _y;
-		dz = 0.0f;
+		float distance;
 		if (my_settings.get_3d())
-		{
 			distance = std::pow(particleB->_x - _x, 2) + std::pow(particleB->_y - _y, 2) + std::pow(particleB->_z - _z, 2);
-			dz = particleB->_z - _z;
-		}
 		else
 			distance = std::pow(particleB->_x - _x, 2) + std::pow(particleB->_y - _y, 2);
 
@@ -122,18 +116,22 @@ void Particle::compute(std::vector<Particle *> &particles, std::vector<std::vect
 		// Compute the interaction force
 		float f = force(distance / my_settings.get_max_range(), interactions[_type.id][particleB->_type.id]);
 
-		// Compute the interaction angle in 2D OLD
-		// float angle = std::atan2(particleB->_y - _y, particleB->_x - _x);
-
-		// Update the particle velocity OLD
-		// ax += (f * std::cos(angle));
-		// ay += (f * std::sin(angle));
-
-		// Update the particle velocity
-		ax += f * (dx / distance);
-		ay += f * (dy / distance);
 		if (my_settings.get_3d())
+		{
+			float dx, dy, dz;
+			dx = particleB->_x - _x;
+			dy = particleB->_y - _y;
+			dz = particleB->_z - _z;
+			ax += f * (dx / distance);
+			ay += f * (dy / distance);
 			az += f * (dz / distance);
+		}
+		else
+		{
+			float angle = std::atan2(particleB->_y - _y, particleB->_x - _x);
+			ax += (f * std::cos(angle));
+			ay += (f * std::sin(angle));
+		}
 	}
 
 	// Check friction and update velocity
@@ -143,11 +141,11 @@ void Particle::compute(std::vector<Particle *> &particles, std::vector<std::vect
 		_future_vz = (_future_vz * (1 - my_settings.get_friction_coefficient())) + (az * my_settings.get_delta_t());
 
 	// Check wall collision
-	if (_future_x + _future_vx < 0 || _future_x + _future_vx > my_settings.get_grid_size())
+	if (_future_x + _future_vx < 0 || _future_x + _future_vx >= my_settings.get_grid_size())
 		_future_vx = -_future_vx;
-	if (_future_y + _future_vy < 0 || _future_y + _future_vy > my_settings.get_grid_size())
+	if (_future_y + _future_vy < 0 || _future_y + _future_vy >= my_settings.get_grid_size())
 		_future_vy = -_future_vy;
-	if ((my_settings.get_3d()) && (_future_z + _future_vz < 0 || _future_z + _future_vz > my_settings.get_grid_size()))
+	if ((my_settings.get_3d()) && (_future_z + _future_vz < 0 || _future_z + _future_vz >= my_settings.get_grid_size()))
 		_future_vz = -_future_vz;
 
 	// Update the future particle position
@@ -181,12 +179,13 @@ void Particle::draw(sf::RenderWindow &window) const
 
 	if (my_settings.get_3d())
 	{
-		// Setting the radius of the particle depending on its depth (far => small, close => big)
-		float depth = _z - (my_settings.get_grid_size() / 2.f); // Depth is between 0 and grid_size
-		shape.setRadius(my_settings.get_particle_size() * ((depth / my_settings.get_grid_size()) + 0.5f));
+		float depth = 2.f * _z / my_settings.get_grid_size(); // depth is between 0.f and 2.f
 
-		// Setting the transparence of the particle depending on its depth (far => transparent, close => transparent, middle => opaque)
-		color.a = static_cast<sf::Uint8>(200 * (1 - (std::abs(depth) / (my_settings.get_grid_size() / 2.f))) + 55);
+		// Setting the radius of the particle depending on its depth (far => small, close => big)
+		shape.setRadius(std::pow(my_settings.get_particle_size(), depth));
+
+		// Setting the transparence of the particle depending on its depth (far => transparent, close => opaque)
+		color.a = static_cast<sf::Uint8>((90.f * depth) + 75.f);
 	}
 
 	shape.setFillColor(color);

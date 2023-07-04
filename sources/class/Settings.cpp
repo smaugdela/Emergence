@@ -226,9 +226,9 @@ void Settings::set_particle_size(float particle_size)
 		particle_size = 1.0f;
 		std::cerr << "Particle size is too small, it has been set to 1." << std::endl;
 	}
-	else if (particle_size > 50.0f)
+	else if (particle_size > 10.0f)
 	{
-		particle_size = 50.0f;
+		particle_size = 10.0f;
 		std::cerr << "Particle size is too big, it has been set to 10." << std::endl;
 	}
 	this->particle_size = particle_size;
