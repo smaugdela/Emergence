@@ -39,8 +39,15 @@ int main(int ac, char **av)
 	sf::ContextSettings sfml_settings;
 	sfml_settings.antialiasingLevel = my_settings.get_antialiasing_level();
 
-	// Create the window
+	// Create the window and initialize ImGui
 	sf::RenderWindow window(sf::VideoMode(my_settings.get_width(), my_settings.get_height()), my_settings.get_title(), sf::Style::Default, sfml_settings);
+
+	// Initialize ImGui framework
+	if (!ImGui::SFML::Init(window))
+	{
+		std::cerr << "Error: could not initialize ImGui" << std::endl;
+		return EXIT_FAILURE;
+	}
 
 	return loop(window, json_settings);
 }

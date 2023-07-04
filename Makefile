@@ -6,7 +6,7 @@
 #    By: smagdela <smagdela@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/09 14:22:11 by smagdela          #+#    #+#              #
-#    Updated: 2023/07/04 10:16:50 by smagdela         ###   ########.fr        #
+#    Updated: 2023/07/04 18:02:13 by smagdela         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,17 +24,36 @@ INCS    = 	emergence.hpp \
 			json.hpp \
 			class/Particle.hpp \
 			class/Settings.hpp \
+			imgui/imconfig-SFML.h \
+			imgui/imconfig.h \
+			imgui/imgui_internal.h \
+			imgui/imgui-SFML_export.h \
+			imgui/imgui-SFML.h \
+			imgui/imgui.h \
+			imgui/imstb_rectpack.h \
+			imgui/imstb_textedit.h \
+			imgui/imstb_truetype.h \
 
 SRCS    =	main.cpp \
 			loop.cpp \
 			fps.cpp \
 			force.cpp \
+			simulation.cpp \
+			gui.cpp \
 			class/Particle.cpp \
 			class/Settings.cpp \
+			imgui/imgui_draw.cpp \
+			imgui/imgui_tables.cpp \
+			imgui/imgui_widgets.cpp \
+			imgui/imgui-SFML.cpp \
+			imgui/imgui.cpp \
 
 OBJS    =       ${SRCS:.cpp=.o}
 
-INCD    =       includes/
+INCD    =       includes/ \
+				includes/imgui/ \
+
+INCD	:=		${addprefix -I,${INCD}}
 SRCD    =       sources/
 OBJD    =       objects/
 
@@ -43,7 +62,7 @@ OBJS    :=      ${addprefix ${OBJD},${OBJS}}
 SRCS    :=      ${addprefix ${SRCD},${SRCS}}
 
 CXX             =		c++
-CXXFLAGS        =		-Wall -Wextra -Werror -lsfml-graphics -lsfml-window -lsfml-system
+CXXFLAGS        =		-Wall -Wextra -Werror -lsfml-graphics -lsfml-window -lsfml-system -lGL
 
 #################
 #       Fancy Stuff     #
@@ -87,8 +106,8 @@ ${OBJD}%.o:     ${SRCD}%.cpp
 		@echo '➤ Compiling $@...'
 		@mkdir -p ${OBJD}
 		@mkdir -p ${OBJD}/class
-		@mkdir -p ${OBJD}/commands
-		@${CXX} ${CXXFLAGS} -O3 -c -o $@ -I${INCD} $<
+		@mkdir -p ${OBJD}/imgui
+		@${CXX} ${CXXFLAGS} -O3 -c -o $@ ${INCD} $<
 		@echo '✔ Object file built!'
 
 ${NAME}: ${OBJS}
