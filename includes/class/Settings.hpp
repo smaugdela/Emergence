@@ -23,8 +23,7 @@ public:
 	Settings &operator=(Settings const &rhs);
 
 	// Methods
-	// void add_type(particle_type type);
-	// void save_to_json(std::string filename);
+	void save_to_json(std::string filename, std::vector<particle_type *> &types, std::vector<std::vector<float>> &interactions);
 	void load_from_json(json json_settings);
 
 	// Getters
@@ -42,6 +41,7 @@ public:
 	float get_boundary_limit() const;
 	float get_max_range() const;
 	bool get_3d() const;
+	float get_temperature() const;
 
 	// Setters
 	void set_width(unsigned int width);
@@ -58,6 +58,7 @@ public:
 	void set_boundary_limit(float boundary_limit);
 	void set_max_range(float max_range);
 	void set_3d(bool _3d);
+	void set_temperature(float temperature);
 
 private:
 	void init_simulation(std::vector<particle_type> &types, std::vector<std::vector<float>> &interactions, std::vector<Particle *> &particles);
@@ -76,6 +77,7 @@ private:
 	float force_factor;
 	float grid_size; // This is the size of the subgrid used simulate particles.
 	float friction_coefficient;
+	float temperature;
 	float delta_t;		  // This is the time between two physical frames.
 	float boundary_limit; // This is the ratio of the distance between two particles over maximum range at which they repell
 	float max_range;	  // This is the maximum range at which two particles interact

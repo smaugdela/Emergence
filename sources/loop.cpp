@@ -13,9 +13,9 @@ int loop(sf::RenderWindow &window, json file)
 	ImGui::SetNextWindowSize(ImVec2(300, 300));
 
 	// Initialize the simulation parameters
-	std::vector<particle_type> types;
+	std::vector<particle_type *> types;
 	std::vector<std::vector<float>> interactions;
-	std::vector<Particle *> particles;
+	std::vector<std::vector<Particle *>> particles;
 
 	init_simulation(file, types, interactions, particles);
 
@@ -44,7 +44,10 @@ int loop(sf::RenderWindow &window, json file)
 		}
 
 		ImGui::SFML::Update(window, gui_clock.restart());
-		gui(types, interactions, window);
+		gui(types, interactions, particles, window);
+
+		// Update physics parameters that may have changed
+		update_simulation(types, interactions, particles);
 
 		// Main clear+draw+display loop
 		window.clear();
@@ -60,10 +63,11 @@ int loop(sf::RenderWindow &window, json file)
 	}
 
 	// Free memory
-	for (size_t i = 0; i < particles.size(); i++)
-	{
-		delete particles[i];
-	}
+	for (auto &particles_type : particles)
+		for (auto &particle : particles_type)
+			delete particle;
+	for (auto &type : types)
+		delete type;
 
 	ImGui::SFML::Shutdown();
 

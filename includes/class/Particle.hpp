@@ -17,20 +17,22 @@ class Particle
 
 public:
 	Particle();
-	Particle(particle_type type, const size_t id);
+	Particle(particle_type *type);
 	Particle(Particle const &src);
 	Particle &operator=(Particle const &rhs);
-	bool operator==(Particle const &rhs);
 	~Particle();
 
 	// Compute future state
-	void compute(std::vector<Particle *> &particles, std::vector<std::vector<float>> &interactions);
+	void compute(std::vector<std::vector<Particle *>> &particles, std::vector<std::vector<float>> &interactions);
 
 	// Update the actual state to the future state
 	void update();
 
 	// Draw the particle on the window
 	void draw(sf::RenderWindow &window) const;
+
+	// Getters
+	particle_type *get_type() const;
 
 private:
 	float _x;
@@ -45,8 +47,7 @@ private:
 	float _future_vx;
 	float _future_vy;
 	float _future_vz;
-	size_t _id;
-	particle_type _type;
+	particle_type *_type;
 };
 
 #endif /* ******************************************************** PARTICLE_H */

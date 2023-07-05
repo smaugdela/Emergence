@@ -3,6 +3,7 @@
 
 #include <limits.h>
 
+// These are the defaults values for the settings
 #define WIDTH 1000
 #define HEIGHT 1000
 #define TITLE "Emergence"
@@ -15,10 +16,7 @@
 #define DELTA_T 0.02f
 #define BOUNDARY_LIMIT 0.15f
 #define MAX_RANGE 600.f
-
 #define _3D true
 #define TEMPERATURE 0.0f
 
-// #define GRID_SIZE 100000
-#define GRID_MULTIPLIER 1
 #endif

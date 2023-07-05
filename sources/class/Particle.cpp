@@ -8,9 +8,8 @@ Particle::Particle()
 {
 }
 
-Particle::Particle(const particle_type type, const size_t id)
+Particle::Particle(particle_type *type)
 {
-	this->_id = id;
 	this->_type = type;
 	this->_vx = 0.0f;
 	this->_vy = 0.0f;
@@ -72,16 +71,11 @@ Particle &Particle::operator=(Particle const &rhs)
 	return *this;
 }
 
-bool Particle::operator==(Particle const &rhs)
-{
-	return (this->_id == rhs._id);
-}
-
 /*
 ** --------------------------------- METHODS ----------------------------------
 */
 
-void Particle::compute(std::vector<Particle *> &particles, std::vector<std::vector<float>> &interactions)
+void Particle::compute(std::vector<std::vector<Particle *>> &particles, std::vector<std::vector<float>> &interactions)
 {
 	this->_future_x = _x;
 	this->_future_y = _y;
@@ -98,40 +92,59 @@ void Particle::compute(std::vector<Particle *> &particles, std::vector<std::vect
 	Particle *particleB;
 
 	// Update the particle velocity using actual interaction equation
-	for (std::vector<Particle *>::iterator it = particles.begin(); it != particles.end(); it++)
+	for (size_t i = 0; i < particles.size(); ++i)
 	{
-		particleB = *it;
-		if (*this == *particleB)
-			continue;
-
-		float distance;
-		if (my_settings.get_3d())
-			distance = std::pow(particleB->_x - _x, 2) + std::pow(particleB->_y - _y, 2) + std::pow(particleB->_z - _z, 2);
-		else
-			distance = std::pow(particleB->_x - _x, 2) + std::pow(particleB->_y - _y, 2);
-
-		if (distance > my_settings.get_max_range())
-			continue;
-
-		// Compute the interaction force
-		float f = force(distance / my_settings.get_max_range(), interactions[_type.id][particleB->_type.id]);
-
-		if (my_settings.get_3d())
+		for (std::vector<Particle *>::iterator it = particles[i].begin(); it != particles[i].end(); it++)
 		{
-			float dx, dy, dz;
-			dx = particleB->_x - _x;
-			dy = particleB->_y - _y;
-			dz = particleB->_z - _z;
-			ax += f * (dx / distance);
-			ay += f * (dy / distance);
-			az += f * (dz / distance);
+			particleB = *it;
+			if (this == particleB)
+				continue;
+
+			float distance;
+			if (my_settings.get_3d())
+				distance = std::pow(particleB->_x - _x, 2) + std::pow(particleB->_y - _y, 2) + std::pow(particleB->_z - _z, 2);
+			else
+				distance = std::pow(particleB->_x - _x, 2) + std::pow(particleB->_y - _y, 2);
+
+			if (distance > my_settings.get_max_range())
+				continue;
+
+			particle_type *test = particleB->_type;
+			size_t testid = test->id;
+			size_t myid = _type->id;
+			std::vector<float> test2 = interactions[myid];
+			float test3 = test2[testid];
+			(void)test3;
+
+			// Compute the interaction force
+			float f = force(distance / my_settings.get_max_range(), interactions[_type->id][particleB->_type->id]);
+
+			if (my_settings.get_3d())
+			{
+				float dx, dy, dz;
+				dx = particleB->_x - _x;
+				dy = particleB->_y - _y;
+				dz = particleB->_z - _z;
+				ax += f * (dx / distance);
+				ay += f * (dy / distance);
+				az += f * (dz / distance);
+			}
+			else
+			{
+				float angle = std::atan2(particleB->_y - _y, particleB->_x - _x);
+				ax += (f * std::cos(angle));
+				ay += (f * std::sin(angle));
+			}
 		}
-		else
-		{
-			float angle = std::atan2(particleB->_y - _y, particleB->_x - _x);
-			ax += (f * std::cos(angle));
-			ay += (f * std::sin(angle));
-		}
+	}
+
+	// Add temperature
+	if (my_settings.get_temperature() > 0.f)
+	{
+		ax += float(rand() % 3 - 1) * my_settings.get_temperature() * my_settings.get_force_factor();
+		ay += float(rand() % 3 - 1) * my_settings.get_temperature() * my_settings.get_force_factor();
+		if (my_settings.get_3d())
+			az += float(rand() % 3 - 1) * my_settings.get_temperature() * my_settings.get_force_factor();
 	}
 
 	// Check friction and update velocity
@@ -175,7 +188,7 @@ void Particle::draw(sf::RenderWindow &window) const
 	Y = (_y / my_settings.get_grid_size()) * my_settings.get_height();
 	shape.setPosition(X, Y);
 
-	sf::Color color = _type.color;
+	sf::Color color = _type->color;
 
 	if (my_settings.get_3d())
 	{
@@ -196,5 +209,10 @@ void Particle::draw(sf::RenderWindow &window) const
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
 */
+
+particle_type *Particle::get_type() const
+{
+	return _type;
+}
 
 /* ************************************************************************** */

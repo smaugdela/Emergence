@@ -1,17 +1,19 @@
 #include "emergence.hpp"
 
-void init_simulation(json file, std::vector<particle_type> &types, std::vector<std::vector<float>> &interactions, std::vector<Particle *> &particles)
+void init_simulation(json file, std::vector<particle_type *> &types, std::vector<std::vector<float>> &interactions, std::vector<std::vector<Particle *>> &particles)
 {
 	// Read the settings file to initialize the types vector
 	if (file.contains("types"))
 	{
+		size_t id = 0;
 		for (auto &type : file["types"])
 		{
-			particle_type new_type;
-			new_type.id = type["id"];
-			new_type.color = sf::Color(type["color"][0], type["color"][1], type["color"][2]);
-			new_type.amount = type["amount"];
+			particle_type *new_type = new particle_type();
+			new_type->id = id;
+			new_type->color = sf::Color(type["color"][0], type["color"][1], type["color"][2]);
+			new_type->amount = type["amount"];
 			types.push_back(new_type);
+			++id;
 		}
 	}
 
@@ -24,10 +26,10 @@ void init_simulation(json file, std::vector<particle_type> &types, std::vector<s
 			std::cerr << "Error: the number of interactions must be equal to the number of types" << std::endl;
 			exit(EXIT_FAILURE);
 		}
-		for (size_t i = 0; i < types.size(); i++)
+		for (size_t i = 0; i < types.size(); ++i)
 		{
 			std::vector<float> interaction;
-			for (size_t j = 0; j < types.size(); j++)
+			for (size_t j = 0; j < types.size(); ++j)
 			{
 				interaction.push_back(new_interactions[i * types.size() + j]);
 			}
@@ -38,10 +40,10 @@ void init_simulation(json file, std::vector<particle_type> &types, std::vector<s
 	if (types.size() == 0)
 	{
 		std::cout << "No file found, initializing with default values" << std::endl;
-		particle_type type;
-		type.id = 0;
-		type.color = sf::Color::Blue;
-		type.amount = my_settings.get_particle_number();
+		particle_type *type = new particle_type();
+		type->id = 0;
+		type->color = sf::Color::Blue;
+		type->amount = my_settings.get_particle_number();
 		types.push_back(type);
 
 		std::vector<float> interaction;
@@ -50,45 +52,82 @@ void init_simulation(json file, std::vector<particle_type> &types, std::vector<s
 	}
 
 	// Initialize particles vector from types vector
-	size_t id = 0;
-	for (auto &type : types)
+
+	for (size_t id = 0; id < types.size(); id++)
 	{
-		for (size_t i = 0; i < type.amount; i++)
+		std::vector<Particle *> type_particles;
+		for (size_t i = 0; i < types[id]->amount; i++)
 		{
-			Particle *particle = new Particle(type, id);
-			particles.push_back(particle);
-			++id;
+			type_particles.push_back(new Particle(types[id]));
+		}
+		particles.push_back(type_particles);
+	}
+}
+
+// Change the simulation parameters that may have changed
+void update_simulation(std::vector<particle_type *> &types, std::vector<std::vector<float>> &interactions, std::vector<std::vector<Particle *>> &particles)
+{
+	(void)interactions;
+	// Update particles amounts
+	for (size_t i = 0; i < particles.size(); i++)
+	{
+		if (particles[i].size() > types[i]->amount)
+		{
+			// Delete the particles
+			for (size_t j = 0; j < particles[i].size() - types[i]->amount; j++)
+			{
+				delete particles[i][j];
+			}
+			particles[i].erase(particles[i].begin(), particles[i].begin() + particles[i].size() - types[i]->amount);
+		}
+		else if (particles[i].size() < types[i]->amount)
+		{
+			// Add the particles
+			for (size_t j = 0; j < types[i]->amount - particles[i].size(); j++)
+			{
+				particles[i].push_back(new Particle(types[i]));
+			}
 		}
 	}
 }
 
 // Compute the next state of the particle, but does not update it in order to let the other particles update at the same state
-void compute_particles(std::vector<Particle *> &particles, std::vector<std::vector<float>> &interactions)
+void compute_particles(std::vector<std::vector<Particle *>> &particles, std::vector<std::vector<float>> &interactions)
 {
-	// Update the particles
-	for (size_t i = 0; i < particles.size(); i++)
+	// Compute the particles
+	for (auto &type_particles : particles)
 	{
-		// Update the acceleration
-		particles[i]->compute(particles, interactions);
+		for (auto &particle : type_particles)
+		{
+			// Compute the acceleration
+			particle->compute(particles, interactions);
+		}
 	}
 }
 
 // Update the particles with the new state computed in compute_particles
-void update_particles(std::vector<Particle *> &particles)
+void update_particles(std::vector<std::vector<Particle *>> &particles)
 {
 	// Update the particles
-	for (size_t i = 0; i < particles.size(); i++)
+	for (auto &type_particles : particles)
 	{
-		// Update the acceleration
-		particles[i]->update();
+		for (auto &particle : type_particles)
+		{
+			// Compute the acceleration
+			particle->update();
+		}
 	}
 }
 
-void draw_particles(sf::RenderWindow &window, std::vector<Particle *> &particles)
+void draw_particles(sf::RenderWindow &window, std::vector<std::vector<Particle *>> &particles)
 {
 	// Draw the particles
-	for (size_t i = 0; i < particles.size(); i++)
+	for (auto &type_particles : particles)
 	{
-		particles[i]->draw(window);
+		for (auto &particle : type_particles)
+		{
+			// Compute the acceleration
+			particle->draw(window);
+		}
 	}
 }

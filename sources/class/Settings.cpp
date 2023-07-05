@@ -9,7 +9,7 @@ Settings::Settings()
 	// Initialise using macros.
 	unsigned int width, height, antialiasing_level, particle_number;
 	std::string title;
-	float particle_size, force_factor, grid_size, friction_coefficient, delta_t, boundary_limit, max_range;
+	float temperature, particle_size, force_factor, grid_size, friction_coefficient, delta_t, boundary_limit, max_range;
 	bool _3d;
 
 	width = WIDTH;
@@ -31,7 +31,7 @@ Settings::Settings()
 	this->set_particle_number(particle_number);
 
 	// grid_size = GRID_SIZE;
-	grid_size = ((width + height) / 2) * GRID_MULTIPLIER;
+	grid_size = ((width + height) / 2);
 	this->set_grid_size(grid_size);
 
 	force_factor = FORCE_FACTOR;
@@ -54,6 +54,9 @@ Settings::Settings()
 
 	_3d = _3D;
 	this->set_3d(_3d);
+
+	temperature = TEMPERATURE;
+	this->set_temperature(temperature);
 }
 
 Settings::Settings(const Settings &src)
@@ -91,6 +94,7 @@ Settings &Settings::operator=(Settings const &rhs)
 		this->boundary_limit = rhs.boundary_limit;
 		this->max_range = rhs.max_range;
 		this->_3d = rhs._3d;
+		this->temperature = rhs.temperature;
 	}
 	return *this;
 }
@@ -111,12 +115,59 @@ std::ostream &operator<<(std::ostream &o, Settings const &i)
 	o << "Boundary limit: " << i.get_boundary_limit() << std::endl;
 	o << "Max range: " << i.get_max_range() << std::endl;
 	o << "3D: " << i.get_3d() << std::endl;
+	o << "Temperature: " << i.get_temperature() << std::endl;
 	return o;
 }
 
 /*
 ** --------------------------------- METHODS ----------------------------------
 */
+
+void Settings::save_to_json(std::string filename, std::vector<particle_type *> &types, std::vector<std::vector<float>> &interactions)
+{
+	// Save the settings to a json file
+	std::ofstream file(filename);
+	json json_settings;
+
+	json_settings["width"] = this->get_width();
+	json_settings["height"] = this->get_height();
+	json_settings["title"] = this->get_title();
+	json_settings["antialiasing_level"] = this->get_antialiasing_level();
+	json_settings["particle_size"] = this->get_particle_size();
+	json_settings["force_factor"] = this->get_force_factor();
+	json_settings["friction_coefficient"] = this->get_friction_coefficient();
+	json_settings["boundary_limit"] = this->get_boundary_limit();
+	json_settings["max_range"] = std::sqrt(this->get_max_range());
+	json_settings["3D"] = this->get_3d();
+	json_settings["temperature"] = this->get_temperature();
+
+	json_settings["types"] = json::array();
+	for (auto &type : types)
+	{
+		json json_type;
+		json_type["id"] = type->id;
+
+		json json_color;
+		json_color[0] = type->color.r;
+		json_color[1] = type->color.g;
+		json_color[2] = type->color.b;
+		json_type["color"] = json_color;
+
+		json_type["amount"] = type->amount;
+
+		json_settings["types"].push_back(json_type);
+	}
+
+	json_settings["interactions"] = json::array();
+	for (auto &interaction : interactions)
+	{
+		for (auto &value : interaction)
+			json_settings["interactions"].push_back(value);
+	}
+
+	file << json_settings;
+	file.close();
+}
 
 void Settings::load_from_json(json json_settings)
 {
@@ -162,6 +213,9 @@ void Settings::load_from_json(json json_settings)
 
 	if (json_settings.contains("3D"))
 		this->set_3d(json_settings["3D"]);
+
+	if (json_settings.contains("temperature"))
+		this->set_temperature(json_settings["temperature"]);
 }
 
 /*
@@ -350,6 +404,21 @@ void Settings::set_3d(bool is_3d)
 	this->_3d = is_3d;
 }
 
+void Settings::set_temperature(float temperature)
+{
+	if (temperature < 0.f)
+	{
+		temperature = 0.f;
+		std::cerr << "Temperature cannot be negative." << std::endl;
+	}
+	else if (temperature > 1.f)
+	{
+		temperature = 1.f;
+		std::cerr << "Temperature is too big, it has been set to 1." << std::endl;
+	}
+	this->temperature = temperature;
+}
+
 // Getters
 unsigned int Settings::get_width() const
 {
@@ -419,6 +488,11 @@ float Settings::get_max_range() const
 bool Settings::get_3d() const
 {
 	return this->_3d;
+}
+
+float Settings::get_temperature() const
+{
+	return this->temperature;
 }
 
 /* ************************************************************************** */
