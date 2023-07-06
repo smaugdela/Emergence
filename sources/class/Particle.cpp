@@ -201,6 +201,33 @@ void Particle::draw(sf::RenderWindow &window) const
 		color.a = static_cast<sf::Uint8>((90.f * depth) + 75.f);
 	}
 
+	// Take dopper effect into account
+	if (my_settings.get_doppler_effect())
+	{
+		float speed;
+		if (my_settings.get_3d())
+			speed = std::pow(_vx, 2) + std::pow(_vy, 2) + std::pow(_vz, 2);
+		else
+			speed = std::pow(_vx, 2) + std::pow(_vy, 2);
+
+		// float max_speed = std::pow(my_settings.get_width(), 2) + std::pow(my_settings.get_height(), 2);
+		// float doppler = speed / max_speed;
+
+		float doppler = speed / my_settings.get_force_factor();
+
+		if (doppler > 1.f)
+			doppler = 1.f;
+
+		float rspan = 255.f - color.r;
+		float gspan = color.g;
+		float bspan = color.b;
+
+		// The bigger doppler is, the more red the particle is
+		color.r = static_cast<sf::Uint8>(color.r + (rspan * doppler));
+		color.g = static_cast<sf::Uint8>(color.g - (gspan * doppler));
+		color.b = static_cast<sf::Uint8>(color.b - (bspan * doppler));
+	}
+
 	shape.setFillColor(color);
 
 	window.draw(shape);

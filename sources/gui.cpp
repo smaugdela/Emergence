@@ -4,6 +4,7 @@ void gui(std::vector<particle_type *> &types, std::vector<std::vector<float>> &i
 {
 	bool showImGuiWindow = true;
 
+	ImGui::SetNextWindowPos(ImVec2(5, 5), ImGuiCond_Always);
 	ImGui::Begin("Settings", &showImGuiWindow, ImGuiWindowFlags_NoMove);
 	if (showImGuiWindow == false)
 		window.close();
@@ -13,7 +14,17 @@ void gui(std::vector<particle_type *> &types, std::vector<std::vector<float>> &i
 	if (ImGui::CollapsingHeader("Hyper-Parameters"))
 	{
 		ImGui::Text("You can change the hyper-parameters of the simulation here. Be careful, somechanges may lead to unexpected or extreme results.");
-		ImGui::Text("FPS: %d", (int)ImGui::GetIO().Framerate);
+
+		bool paused = my_settings.get_pause();
+		if (ImGui::Checkbox("Pause", &paused))
+			my_settings.set_delta_t(0.0f);
+		else
+			ImGui::Text("FPS: %d", (int)ImGui::GetIO().Framerate);
+		my_settings.set_pause(paused);
+		ImGui::NewLine();
+		bool new_doppler = my_settings.get_doppler_effect();
+		ImGui::Checkbox("Doppler Effect", &new_doppler);
+		my_settings.set_doppler_effect(new_doppler);
 		bool new_3d = my_settings.get_3d();
 		ImGui::Checkbox("3D", &new_3d);
 		my_settings.set_3d(new_3d);
@@ -21,7 +32,10 @@ void gui(std::vector<particle_type *> &types, std::vector<std::vector<float>> &i
 		ImGui::SliderFloat("Particle Radius", &new_radius, 1.0f, 10.0f);
 		my_settings.set_particle_size(new_radius);
 		float force_factor = my_settings.get_force_factor();
-		ImGui::SliderFloat("Force Factor", &force_factor, 0.0f, 5000.0f);
+		if (my_settings.get_3d() == false)
+			ImGui::SliderFloat("Force Factor", &force_factor, 0.0f, 1000.0f);
+		else
+			ImGui::SliderFloat("Force Factor", &force_factor, 0.0f, 5000.0f);
 		my_settings.set_force_factor(force_factor);
 		float friction_coefficient = my_settings.get_friction_coefficient();
 		ImGui::SliderFloat("Friction Coefficient", &friction_coefficient, 0.0f, 1.0f);
@@ -51,12 +65,19 @@ void gui(std::vector<particle_type *> &types, std::vector<std::vector<float>> &i
 			// Convert the type color to ImVec4
 			ImVec4 color = ImVec4(item->color.r / 255.0f, item->color.g / 255.0f, item->color.b / 255.0f, 255.0f);
 
-			ImGui::ColorButton(("Color" + std::to_string(item->id)).c_str(), color);
+			// Use ColorEdit3 or ColorEdit4 for color picking
+			if (ImGui::ColorEdit3(("Color" + std::to_string(item->id)).c_str(), reinterpret_cast<float *>(&color), ImGuiColorEditFlags_NoInputs))
+			{
+				// Update the color when it's changed in the color picker
+				item->color.r = static_cast<uint8_t>(color.x * 255);
+				item->color.g = static_cast<uint8_t>(color.y * 255);
+				item->color.b = static_cast<uint8_t>(color.z * 255);
+			}
 			ImGui::SameLine();
 			ImGui::Text("id: %li", item->id);
 			ImGui::SameLine();
 			int amount = int(item->amount);
-			ImGui::SliderInt((std::string("Amount ") + std::to_string(item->id)).c_str(), &amount, 0, 1000);
+			ImGui::SliderInt((std::string("Amount ") + std::to_string(item->id)).c_str(), &amount, 0, 1000, "%d");
 			item->amount = amount;
 			ImGui::SameLine();
 			size_t indexToDelete = 0;
@@ -122,6 +143,24 @@ void gui(std::vector<particle_type *> &types, std::vector<std::vector<float>> &i
 	if (ImGui::CollapsingHeader("Interaction Matrix"))
 	{
 		ImGui::Text("You can modify the interaction matrix here. Each <ij> coefficient represent how much particles of type <i> are attracted (or repelled if negative) to particles of type <j>.");
+
+		bool symmetric = my_settings.get_energy_conservation();
+		ImGui::Checkbox("Symmetric", &symmetric);
+		if (symmetric)
+		{
+			for (size_t i = 0; i < interactions.size(); i++)
+			{
+				for (size_t j = 0; j < interactions.size(); j++)
+				{
+					if (i != j)
+					{
+						interactions[j][i] = interactions[i][j];
+					}
+				}
+			}
+		}
+		my_settings.set_energy_conservation(symmetric);
+
 		// First print the type families
 		for (const auto &item : types)
 		{

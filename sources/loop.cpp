@@ -9,7 +9,6 @@ int loop(sf::RenderWindow &window, json file)
 
 	// Initialize the GUI parameters
 	sf::Clock gui_clock;
-	ImGui::SetNextWindowPos(ImVec2(5, 5), ImGuiCond_Always);
 	ImGui::SetNextWindowSize(ImVec2(300, 300));
 
 	// Initialize the simulation parameters
@@ -24,7 +23,10 @@ int loop(sf::RenderWindow &window, json file)
 		// Compute the physics delta_t
 		last_time = current_time;
 		current_time = clock.getElapsedTime().asSeconds();
-		my_settings.set_delta_t(current_time - last_time);
+		if (my_settings.get_pause() == false)
+			my_settings.set_delta_t(current_time - last_time);
+		else
+			my_settings.set_delta_t(0.f);
 
 		// Handle events
 		sf::Event event;

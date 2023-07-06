@@ -19,5 +19,9 @@
 #define MAX_RANGE 600.f
 #define _3D true
 #define TEMPERATURE 0.0f
+#define DOPPLER_EFFECT false
+
+#define ENERGY_CONSERVATION false
+#define PAUSE false
 
 #endif

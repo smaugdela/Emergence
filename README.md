@@ -13,8 +13,9 @@ Trying to demonstrate emergence phenomenon through a simple graphical side-proje
 - [ ] Add proceduraly generated sound/music in relation to particle behavior
 - [x] Take into account the fact that the simulation area may not be squared (width != height), implement a grid_height and grid_width
 - [ ] Use color hex code instead of RGB in json files
-- [ ] Doppler-like effect (faster particles turn to a given color)
-- [ ] Choose each particle type color with a color picker
+- [x] Doppler-like effect (faster particles turn to a given color)
+- [x] Choose each particle type color with a color picker
 - [ ] Pause button (delta_t = 0)
 - [ ] Create a good documentation and explanation
 - [ ] Load file button
+- [ ] Add a conservation of energy button (symmetrical interactions matrix)

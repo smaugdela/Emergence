@@ -42,6 +42,9 @@ public:
 	float get_max_range() const;
 	bool get_3d() const;
 	float get_temperature() const;
+	bool get_doppler_effect() const;
+	bool get_energy_conservation() const;
+	bool get_pause() const;
 
 	// Setters
 	void set_width(float width);
@@ -59,6 +62,9 @@ public:
 	void set_max_range(float max_range);
 	void set_3d(bool _3d);
 	void set_temperature(float temperature);
+	void set_doppler_effect(bool doppler_effect);
+	void set_energy_conservation(bool energy_conservation);
+	void set_pause(bool pause);
 
 private:
 	void init_simulation(std::vector<particle_type> &types, std::vector<std::vector<float>> &interactions, std::vector<Particle *> &particles);
@@ -83,6 +89,9 @@ private:
 	float boundary_limit; // This is the ratio of the distance between two particles over maximum range at which they repell
 	float max_range;	  // This is the maximum range at which two particles interact
 	bool _3d;
+	bool doppler_effect;
+	bool energy_conservation;
+	bool pause;
 };
 
 std::ostream &operator<<(std::ostream &o, Settings const &i);

@@ -10,7 +10,7 @@ Settings::Settings()
 	unsigned int antialiasing_level, particle_number;
 	std::string title;
 	float width, height, depth, temperature, particle_size, force_factor, friction_coefficient, delta_t, boundary_limit, max_range;
-	bool _3d;
+	bool _3d, doppler_effect, pause, energy_conservation;
 
 	width = WIDTH;
 	this->set_width(width);
@@ -56,6 +56,15 @@ Settings::Settings()
 
 	temperature = TEMPERATURE;
 	this->set_temperature(temperature);
+
+	doppler_effect = DOPPLER_EFFECT;
+	this->set_doppler_effect(doppler_effect);
+
+	energy_conservation = ENERGY_CONSERVATION;
+	this->set_energy_conservation(energy_conservation);
+
+	pause = PAUSE;
+	this->set_pause(pause);
 }
 
 Settings::Settings(const Settings &src)
@@ -94,6 +103,9 @@ Settings &Settings::operator=(Settings const &rhs)
 		this->max_range = rhs.max_range;
 		this->_3d = rhs._3d;
 		this->temperature = rhs.temperature;
+		this->doppler_effect = rhs.doppler_effect;
+		this->energy_conservation = rhs.energy_conservation;
+		this->pause = rhs.pause;
 	}
 	return *this;
 }
@@ -115,6 +127,9 @@ std::ostream &operator<<(std::ostream &o, Settings const &i)
 	o << "Max range: " << i.get_max_range() << std::endl;
 	o << "3D: " << i.get_3d() << std::endl;
 	o << "Temperature: " << i.get_temperature() << std::endl;
+	o << "Doppler effect: " << i.get_doppler_effect() << std::endl;
+	o << "Energy conservation: " << i.get_energy_conservation() << std::endl;
+	o << "Pause: " << i.get_pause() << std::endl;
 	return o;
 }
 
@@ -128,9 +143,6 @@ void Settings::save_to_json(std::string filename, std::vector<particle_type *> &
 	std::ofstream file(filename);
 	json json_settings;
 
-	json_settings["width"] = this->get_width();
-	json_settings["height"] = this->get_height();
-	json_settings["depth"] = this->get_depth();
 	json_settings["title"] = this->get_title();
 	json_settings["antialiasing_level"] = this->get_antialiasing_level();
 	json_settings["particle_size"] = this->get_particle_size();
@@ -140,6 +152,9 @@ void Settings::save_to_json(std::string filename, std::vector<particle_type *> &
 	json_settings["max_range"] = std::sqrt(this->get_max_range());
 	json_settings["3D"] = this->get_3d();
 	json_settings["temperature"] = this->get_temperature();
+	json_settings["doppler_effect"] = this->get_doppler_effect();
+	json_settings["energy_conservation"] = this->get_energy_conservation();
+	json_settings["pause"] = this->get_pause();
 
 	json_settings["types"] = json::array();
 	for (auto &type : types)
@@ -216,6 +231,15 @@ void Settings::load_from_json(json json_settings)
 
 	if (json_settings.contains("temperature"))
 		this->set_temperature(json_settings["temperature"]);
+
+	if (json_settings.contains("doppler_effect"))
+		this->set_doppler_effect(json_settings["doppler_effect"]);
+
+	if (json_settings.contains("energy_conservation"))
+		this->set_energy_conservation(json_settings["energy_conservation"]);
+
+	if (json_settings.contains("pause"))
+		this->set_pause(json_settings["pause"]);
 }
 
 /*
@@ -419,6 +443,21 @@ void Settings::set_temperature(float temperature)
 	this->temperature = temperature;
 }
 
+void Settings::set_doppler_effect(bool doppler_effect)
+{
+	this->doppler_effect = doppler_effect;
+}
+
+void Settings::set_energy_conservation(bool energy_conservation)
+{
+	this->energy_conservation = energy_conservation;
+}
+
+void Settings::set_pause(bool pause)
+{
+	this->pause = pause;
+}
+
 // Getters
 float Settings::get_width() const
 {
@@ -493,6 +532,21 @@ bool Settings::get_3d() const
 float Settings::get_temperature() const
 {
 	return this->temperature;
+}
+
+bool Settings::get_doppler_effect() const
+{
+	return this->doppler_effect;
+}
+
+bool Settings::get_energy_conservation() const
+{
+	return this->energy_conservation;
+}
+
+bool Settings::get_pause() const
+{
+	return this->pause;
 }
 
 /* ************************************************************************** */

@@ -1,0 +1,37 @@
+{
+	"3D": true,
+	"antialiasing_level": 4,
+	"boundary_limit": 0.15,
+	"force_factor": 100.0,
+	"friction_coefficient": 0.01,
+	"interactions": [
+		1.0,
+		-0.4,
+		0.4,
+		1.0
+	],
+	"max_range": 600.0,
+	"particle_size": 2.9,
+	"temperature": 0.0,
+	"title": "Virtual Goldfish",
+	"types": [
+		{
+			"amount": 500,
+			"color": [
+				255,
+				0,
+				0
+			],
+			"id": 0
+		},
+		{
+			"amount": 73,
+			"color": [
+				255,
+				247,
+				0
+			],
+			"id": 1
+		}
+	]
+}
