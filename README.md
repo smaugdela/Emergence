@@ -11,8 +11,10 @@ Trying to demonstrate emergence phenomenon through a simple graphical side-proje
 - [ ] Add mouse cursor interaction (repulsive/attractive force, generate/delete particles).
 - [x] Add fake 3D using a 3rd dimension in coordinates computations and a fake depth effect affecting particle size and bluriness.
 - [ ] Add proceduraly generated sound/music in relation to particle behavior
-- [ ] Take into account the fact that the simulation area may not be squared (width != height), implement a grid_height and grid_width
+- [x] Take into account the fact that the simulation area may not be squared (width != height), implement a grid_height and grid_width
 - [ ] Use color hex code instead of RGB in json files
 - [ ] Doppler-like effect (faster particles turn to a given color)
 - [ ] Choose each particle type color with a color picker
 - [ ] Pause button (delta_t = 0)
+- [ ] Create a good documentation and explanation
+- [ ] Load file button

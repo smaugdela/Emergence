@@ -7,9 +7,9 @@
 Settings::Settings()
 {
 	// Initialise using macros.
-	unsigned int width, height, antialiasing_level, particle_number;
+	unsigned int antialiasing_level, particle_number;
 	std::string title;
-	float temperature, particle_size, force_factor, grid_size, friction_coefficient, delta_t, boundary_limit, max_range;
+	float width, height, depth, temperature, particle_size, force_factor, friction_coefficient, delta_t, boundary_limit, max_range;
 	bool _3d;
 
 	width = WIDTH;
@@ -17,6 +17,9 @@ Settings::Settings()
 
 	height = HEIGHT;
 	this->set_height(height);
+
+	depth = DEPTH;
+	this->set_depth(depth);
 
 	title = TITLE;
 	this->set_title(title);
@@ -29,10 +32,6 @@ Settings::Settings()
 
 	particle_number = PARTICLE_NUMBER;
 	this->set_particle_number(particle_number);
-
-	// grid_size = GRID_SIZE;
-	grid_size = ((width + height) / 2);
-	this->set_grid_size(grid_size);
 
 	force_factor = FORCE_FACTOR;
 	this->set_force_factor(force_factor);
@@ -82,12 +81,12 @@ Settings &Settings::operator=(Settings const &rhs)
 	{
 		this->width = rhs.width;
 		this->height = rhs.height;
+		this->depth = rhs.depth;
 		this->title = rhs.title;
 		this->antialiasing_level = rhs.antialiasing_level;
 		this->particle_size = rhs.particle_size;
 		this->particle_number = rhs.particle_number;
 		this->force_factor = rhs.force_factor;
-		this->grid_size = rhs.grid_size;
 		this->fps_limit = rhs.fps_limit;
 		this->friction_coefficient = rhs.friction_coefficient;
 		this->delta_t = rhs.delta_t;
@@ -103,12 +102,12 @@ std::ostream &operator<<(std::ostream &o, Settings const &i)
 {
 	o << "Width: " << i.get_width() << std::endl;
 	o << "Height: " << i.get_height() << std::endl;
+	o << "Depth: " << i.get_depth() << std::endl;
 	o << "Title: " << i.get_title() << std::endl;
 	o << "Antialiasing level: " << i.get_antialiasing_level() << std::endl;
 	o << "Particle size: " << i.get_particle_size() << std::endl;
 	o << "Particle number: " << i.get_particle_number() << std::endl;
 	o << "Max acceleration: " << i.get_force_factor() << std::endl;
-	o << "Grid size: " << i.get_grid_size() << std::endl;
 	o << "fps_limit: " << i.get_fps_limit() << std::endl;
 	o << "Friction: " << i.get_friction_coefficient() << std::endl;
 	o << "Delta t: " << i.get_delta_t() << std::endl;
@@ -131,6 +130,7 @@ void Settings::save_to_json(std::string filename, std::vector<particle_type *> &
 
 	json_settings["width"] = this->get_width();
 	json_settings["height"] = this->get_height();
+	json_settings["depth"] = this->get_depth();
 	json_settings["title"] = this->get_title();
 	json_settings["antialiasing_level"] = this->get_antialiasing_level();
 	json_settings["particle_size"] = this->get_particle_size();
@@ -178,6 +178,9 @@ void Settings::load_from_json(json json_settings)
 	if (json_settings.contains("height"))
 		this->set_height(json_settings["height"]);
 
+	if (json_settings.contains("depth"))
+		this->set_depth(json_settings["depth"]);
+
 	if (json_settings.contains("title"))
 		this->set_title(json_settings["title"]);
 
@@ -192,9 +195,6 @@ void Settings::load_from_json(json json_settings)
 
 	if (json_settings.contains("force_factor"))
 		this->set_force_factor(json_settings["force_factor"]);
-
-	if (json_settings.contains("grid_size"))
-		this->set_grid_size(json_settings["grid_size"]);
 
 	if (json_settings.contains("fps_limit"))
 		this->set_fps_limit(json_settings["fps_limit"]);
@@ -223,34 +223,49 @@ void Settings::load_from_json(json json_settings)
 */
 
 // Setters
-void Settings::set_width(unsigned int width)
+void Settings::set_width(float width)
 {
-	if (width < 100)
+	if (width < 100.f)
 	{
-		width = 100;
+		width = 100.f;
 		std::cerr << "Width is too small, it has been set to 100." << std::endl;
 	}
-	else if (width > 4000)
+	else if (width > 4000.f)
 	{
-		width = 4000;
+		width = 4000.f;
 		std::cerr << "Width is too big, it has been set to 4000." << std::endl;
 	}
 	this->width = width;
 }
 
-void Settings::set_height(unsigned int height)
+void Settings::set_height(float height)
 {
-	if (height < 100)
+	if (height < 100.f)
 	{
-		height = 100;
+		height = 100.f;
 		std::cerr << "Height is too small, it has been set to 100." << std::endl;
 	}
-	else if (height > 4000)
+	else if (height > 4000.f)
 	{
-		height = 4000;
+		height = 4000.f;
 		std::cerr << "Height is too big, it has been set to 4000." << std::endl;
 	}
 	this->height = height;
+}
+
+void Settings::set_depth(float depth)
+{
+	if (depth < 100.f)
+	{
+		depth = 100.f;
+		std::cerr << "Depth is too small, it has been set to 100." << std::endl;
+	}
+	else if (depth > 4000.f)
+	{
+		depth = 4000.f;
+		std::cerr << "Depth is too big, it has been set to 4000." << std::endl;
+	}
+	this->depth = depth;
 }
 
 void Settings::set_title(std::string title)
@@ -310,27 +325,12 @@ void Settings::set_force_factor(float force_factor)
 		force_factor = 1.0f;
 		std::cerr << "Force factor is too small, it has been set to 1." << std::endl;
 	}
-	else if (force_factor > grid_size * 10.f)
+	else if (force_factor > width * 10.f)
 	{
-		force_factor = grid_size * 10.f;
-		std::cerr << "Force factor is too big, it has been set to grid_size * 10: " << this->grid_size * 10 << std::endl;
+		force_factor = width * 10.f;
+		std::cerr << "Force factor is too big, it has been set to width * 10: " << this->width * 10.f << std::endl;
 	}
 	this->force_factor = force_factor;
-}
-
-void Settings::set_grid_size(float grid_size)
-{
-	if (grid_size < 1.0f)
-	{
-		grid_size = float(std::max(this->width, this->height));
-		std::cerr << "Grid size is too small, it has been set to " << grid_size << std::endl;
-	}
-	else if (grid_size > INT_MAX)
-	{
-		grid_size = float(INT_MAX);
-		std::cerr << "Grid size is too big, it has been set to INT_MAX." << std::endl;
-	}
-	this->grid_size = grid_size;
 }
 
 void Settings::set_fps_limit(unsigned int fps_limit)
@@ -420,14 +420,19 @@ void Settings::set_temperature(float temperature)
 }
 
 // Getters
-unsigned int Settings::get_width() const
+float Settings::get_width() const
 {
 	return this->width;
 }
 
-unsigned int Settings::get_height() const
+float Settings::get_height() const
 {
 	return this->height;
+}
+
+float Settings::get_depth() const
+{
+	return this->depth;
 }
 
 std::string Settings::get_title() const
@@ -453,11 +458,6 @@ unsigned int Settings::get_particle_number() const
 float Settings::get_force_factor() const
 {
 	return this->force_factor;
-}
-
-float Settings::get_grid_size() const
-{
-	return this->grid_size;
 }
 
 unsigned int Settings::get_fps_limit() const

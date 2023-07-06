@@ -21,7 +21,7 @@ void gui(std::vector<particle_type *> &types, std::vector<std::vector<float>> &i
 		ImGui::SliderFloat("Particle Radius", &new_radius, 1.0f, 10.0f);
 		my_settings.set_particle_size(new_radius);
 		float force_factor = my_settings.get_force_factor();
-		ImGui::SliderFloat("Force Factor", &force_factor, 0.0f, 1000.0f);
+		ImGui::SliderFloat("Force Factor", &force_factor, 0.0f, 5000.0f);
 		my_settings.set_force_factor(force_factor);
 		float friction_coefficient = my_settings.get_friction_coefficient();
 		ImGui::SliderFloat("Friction Coefficient", &friction_coefficient, 0.0f, 1.0f);
@@ -51,7 +51,7 @@ void gui(std::vector<particle_type *> &types, std::vector<std::vector<float>> &i
 			// Convert the type color to ImVec4
 			ImVec4 color = ImVec4(item->color.r / 255.0f, item->color.g / 255.0f, item->color.b / 255.0f, 255.0f);
 
-			ImGui::ColorButton(std::to_string(item->id).c_str(), color);
+			ImGui::ColorButton(("Color" + std::to_string(item->id)).c_str(), color);
 			ImGui::SameLine();
 			ImGui::Text("id: %li", item->id);
 			ImGui::SameLine();

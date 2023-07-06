@@ -4,8 +4,9 @@
 #include <limits.h>
 
 // These are the defaults values for the settings
-#define WIDTH 1000
-#define HEIGHT 1000
+#define WIDTH 1000.f
+#define HEIGHT 1000.f
+#define DEPTH 1000.f
 #define TITLE "Emergence"
 #define ANTIALIASING_LEVEL 4
 #define PARTICLE_RADIUS 5.0f

@@ -27,14 +27,14 @@ public:
 	void load_from_json(json json_settings);
 
 	// Getters
-	unsigned int get_width() const;
-	unsigned int get_height() const;
+	float get_width() const;
+	float get_height() const;
+	float get_depth() const;
 	std::string get_title() const;
 	unsigned int get_antialiasing_level() const;
 	float get_particle_size() const;
 	unsigned int get_particle_number() const;
 	float get_force_factor() const;
-	float get_grid_size() const;
 	unsigned int get_fps_limit() const;
 	float get_friction_coefficient() const;
 	float get_delta_t() const;
@@ -44,14 +44,14 @@ public:
 	float get_temperature() const;
 
 	// Setters
-	void set_width(unsigned int width);
-	void set_height(unsigned int height);
+	void set_width(float width);
+	void set_height(float height);
+	void set_depth(float depth);
 	void set_title(std::string title);
 	void set_antialiasing_level(unsigned int antialiasing_level);
 	void set_particle_size(float particle_size);
 	void set_particle_number(unsigned int particle_number);
 	void set_force_factor(float force_factor);
-	void set_grid_size(float grid_size);
 	void set_fps_limit(unsigned int framerate_limit);
 	void set_friction_coefficient(float friction_coefficient);
 	void set_delta_t(float delta_t);
@@ -64,8 +64,10 @@ private:
 	void init_simulation(std::vector<particle_type> &types, std::vector<std::vector<float>> &interactions, std::vector<Particle *> &particles);
 
 	// Window settings
-	unsigned int width;
-	unsigned int height;
+	float width;
+	float height;
+	float depth;
+
 	std::string title;
 	unsigned int fps_limit;
 
@@ -75,7 +77,6 @@ private:
 	float particle_size;
 	unsigned int particle_number;
 	float force_factor;
-	float grid_size; // This is the size of the subgrid used simulate particles.
 	float friction_coefficient;
 	float temperature;
 	float delta_t;		  // This is the time between two physical frames.

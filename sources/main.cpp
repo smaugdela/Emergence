@@ -40,7 +40,9 @@ int main(int ac, char **av)
 	sfml_settings.antialiasingLevel = my_settings.get_antialiasing_level();
 
 	// Create the window and initialize ImGui
-	sf::RenderWindow window(sf::VideoMode(my_settings.get_width(), my_settings.get_height()), my_settings.get_title(), sf::Style::Default, sfml_settings);
+	sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], my_settings.get_title(), sf::Style::Fullscreen, sfml_settings);
+	my_settings.set_width(window.getSize().x);
+	my_settings.set_height(window.getSize().y);
 
 	// Initialize ImGui framework
 	if (!ImGui::SFML::Init(window))

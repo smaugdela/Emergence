@@ -16,11 +16,10 @@ Particle::Particle(particle_type *type)
 	this->_vz = 0.0f;
 
 	// Generate random coordinates for the particle between, 0 and GRID_SIZE;
-	int limit = int(my_settings.get_grid_size());
-	this->_x = float(rand() % limit);
-	this->_y = float(rand() % limit);
+	this->_x = float(rand() % int(my_settings.get_width()));
+	this->_y = float(rand() % int(my_settings.get_height()));
 	if (my_settings.get_3d())
-		this->_z = float(rand() % limit);
+		this->_z = float(rand() % int(my_settings.get_depth()));
 	else
 		this->_z = 0.0f;
 
@@ -154,11 +153,11 @@ void Particle::compute(std::vector<std::vector<Particle *>> &particles, std::vec
 		_future_vz = (_future_vz * (1 - my_settings.get_friction_coefficient())) + (az * my_settings.get_delta_t());
 
 	// Check wall collision
-	if (_future_x + _future_vx < 0 || _future_x + _future_vx >= my_settings.get_grid_size())
+	if (_future_x + _future_vx < 0.f || _future_x + _future_vx >= my_settings.get_width())
 		_future_vx = -_future_vx;
-	if (_future_y + _future_vy < 0 || _future_y + _future_vy >= my_settings.get_grid_size())
+	if (_future_y + _future_vy < 0.f || _future_y + _future_vy >= my_settings.get_height())
 		_future_vy = -_future_vy;
-	if ((my_settings.get_3d()) && (_future_z + _future_vz < 0 || _future_z + _future_vz >= my_settings.get_grid_size()))
+	if ((my_settings.get_3d()) && (_future_z + _future_vz < 0.f || _future_z + _future_vz >= my_settings.get_depth()))
 		_future_vz = -_future_vz;
 
 	// Update the future particle position
@@ -183,16 +182,17 @@ void Particle::draw(sf::RenderWindow &window) const
 	sf::CircleShape shape(my_settings.get_particle_size());
 
 	// Need to transform the particle coordinates to the window coordinates
-	float X, Y;
-	X = (_x / my_settings.get_grid_size()) * my_settings.get_width();
-	Y = (_y / my_settings.get_grid_size()) * my_settings.get_height();
-	shape.setPosition(X, Y);
+	// float X, Y;
+	// X = (_x / my_settings.get_grid_size()) * my_settings.get_width();
+	// Y = (_y / my_settings.get_grid_size()) * my_settings.get_height();
+	// shape.setPosition(X, Y);
+	shape.setPosition(_x, _y);
 
 	sf::Color color = _type->color;
 
 	if (my_settings.get_3d())
 	{
-		float depth = 2.f * _z / my_settings.get_grid_size(); // depth is between 0.f and 2.f
+		float depth = 2.f * _z / my_settings.get_depth(); // depth is between 0.f and 2.f
 
 		// Setting the radius of the particle depending on its depth (far => small, close => big)
 		shape.setRadius(std::pow(my_settings.get_particle_size(), depth));

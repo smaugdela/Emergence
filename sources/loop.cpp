@@ -9,7 +9,7 @@ int loop(sf::RenderWindow &window, json file)
 
 	// Initialize the GUI parameters
 	sf::Clock gui_clock;
-	ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always);
+	ImGui::SetNextWindowPos(ImVec2(5, 5), ImGuiCond_Always);
 	ImGui::SetNextWindowSize(ImVec2(300, 300));
 
 	// Initialize the simulation parameters
@@ -19,20 +19,12 @@ int loop(sf::RenderWindow &window, json file)
 
 	init_simulation(file, types, interactions, particles);
 
-	// Compute mean fps
-	size_t iteration = 0;
-	float delta_t_sum = 0;
-
 	while (window.isOpen())
 	{
 		// Compute the physics delta_t
 		last_time = current_time;
 		current_time = clock.getElapsedTime().asSeconds();
 		my_settings.set_delta_t(current_time - last_time);
-
-		// Compute mean fps
-		++iteration;
-		delta_t_sum += my_settings.get_delta_t();
 
 		// Handle events
 		sf::Event event;
@@ -70,9 +62,6 @@ int loop(sf::RenderWindow &window, json file)
 		delete type;
 
 	ImGui::SFML::Shutdown();
-
-	// Print mean fps
-	std::cout << "Mean fps: " << 1.0f / (delta_t_sum / float(iteration)) << std::endl;
 
 	return EXIT_SUCCESS;
 }
