@@ -15,7 +15,7 @@ Trying to demonstrate emergence phenomenon through a simple graphical side-proje
 - [ ] Use color hex code instead of RGB in json files
 - [x] Doppler-like effect (faster particles turn to a given color)
 - [x] Choose each particle type color with a color picker
-- [ ] Pause button (delta_t = 0)
+- [x] Pause button (delta_t = 0)
 - [ ] Create a good documentation and explanation
 - [ ] Load file button
-- [ ] Add a conservation of energy button (symmetrical interactions matrix)
+- [x] Add a conservation of energy button (symmetrical interactions matrix)
