@@ -169,6 +169,9 @@ void Particle::compute(std::vector<std::vector<Particle *>> &particles, std::vec
 
 void Particle::update()
 {
+	if (my_settings.get_pause())
+		return;
+
 	_x = _future_x;
 	_y = _future_y;
 	_z = _future_z;
@@ -213,7 +216,7 @@ void Particle::draw(sf::RenderWindow &window) const
 		// float max_speed = std::pow(my_settings.get_width(), 2) + std::pow(my_settings.get_height(), 2);
 		// float doppler = speed / max_speed;
 
-		float doppler = speed / my_settings.get_force_factor();
+		float doppler = speed / my_settings.get_doppler_factor();
 
 		if (doppler > 1.f)
 			doppler = 1.f;

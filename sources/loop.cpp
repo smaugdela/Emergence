@@ -57,13 +57,18 @@ int loop(sf::RenderWindow &window, json file)
 	}
 
 	// Free memory
+	free(particles, types);
+
+	ImGui::SFML::Shutdown();
+
+	return EXIT_SUCCESS;
+}
+
+void free(std::vector<std::vector<Particle *>> &particles, std::vector<particle_type *> &types)
+{
 	for (auto &particles_type : particles)
 		for (auto &particle : particles_type)
 			delete particle;
 	for (auto &type : types)
 		delete type;
-
-	ImGui::SFML::Shutdown();
-
-	return EXIT_SUCCESS;
 }

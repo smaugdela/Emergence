@@ -15,6 +15,7 @@ using json = nlohmann::json;
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <cstdlib>
 #include <string>
 #include <fstream>
@@ -36,5 +37,6 @@ void draw_particles(sf::RenderWindow &window, std::vector<std::vector<Particle *
 void fps_counter(sf::RenderWindow &window, std::string fps);
 void gui(std::vector<particle_type *> &types, std::vector<std::vector<float>> &interactions, std::vector<std::vector<Particle *>> &particles, sf::RenderWindow &window);
 float force(float r, float relation_coefficient);
+void free(std::vector<std::vector<Particle *>> &particles, std::vector<particle_type *> &types);
 
 #endif

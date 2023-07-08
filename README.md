@@ -17,5 +17,5 @@ Trying to demonstrate emergence phenomenon through a simple graphical side-proje
 - [x] Choose each particle type color with a color picker
 - [x] Pause button (delta_t = 0)
 - [ ] Create a good documentation and explanation
-- [ ] Load file button
+- [x] Load file button
 - [x] Add a conservation of energy button (symmetrical interactions matrix)

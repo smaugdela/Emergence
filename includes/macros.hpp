@@ -20,8 +20,8 @@
 #define _3D true
 #define TEMPERATURE 0.0f
 #define DOPPLER_EFFECT false
-
 #define ENERGY_CONSERVATION false
-#define PAUSE false
+#define PAUSE true
+#define DOPPLER_FACTOR 10.f
 
 #endif

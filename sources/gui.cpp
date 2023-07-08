@@ -10,21 +10,24 @@ void gui(std::vector<particle_type *> &types, std::vector<std::vector<float>> &i
 		window.close();
 
 	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
+	ImGui::PushItemWidth(300.f);
 	ImGui::Text("That's where you play God.");
 	if (ImGui::CollapsingHeader("Hyper-Parameters"))
 	{
 		ImGui::Text("You can change the hyper-parameters of the simulation here. Be careful, somechanges may lead to unexpected or extreme results.");
 
 		bool paused = my_settings.get_pause();
-		if (ImGui::Checkbox("Pause", &paused))
-			my_settings.set_delta_t(0.0f);
-		else
-			ImGui::Text("FPS: %d", (int)ImGui::GetIO().Framerate);
+		ImGui::Checkbox("Pause", &paused);
 		my_settings.set_pause(paused);
+		ImGui::Text("FPS: %d", (int)ImGui::GetIO().Framerate);
 		ImGui::NewLine();
 		bool new_doppler = my_settings.get_doppler_effect();
 		ImGui::Checkbox("Doppler Effect", &new_doppler);
 		my_settings.set_doppler_effect(new_doppler);
+		ImGui::SameLine();
+		float new_doppler_factor = my_settings.get_doppler_factor();
+		ImGui::SliderFloat("Doppler Factor", &new_doppler_factor, 1.0f, 1000.0f);
+		my_settings.set_doppler_factor(new_doppler_factor);
 		bool new_3d = my_settings.get_3d();
 		ImGui::Checkbox("3D", &new_3d);
 		my_settings.set_3d(new_3d);
@@ -50,10 +53,63 @@ void gui(std::vector<particle_type *> &types, std::vector<std::vector<float>> &i
 		ImGui::SliderFloat("Temperature", &new_temperature, 0.0f, 1.0f);
 		my_settings.set_temperature(new_temperature);
 		ImGui::NewLine();
+
+		// Output file name
+		static char filename[128] = "";
+		ImGui::InputText("##filename", filename, IM_ARRAYSIZE(filename));
+		ImGui::SameLine();
+
+		// Save to file button
 		if (ImGui::Button("Save To File"))
 		{
-			my_settings.save_to_json("output.json", types, interactions);
+			if (filename[0] == '\0')
+				my_settings.save_to_json("default.json", types, interactions);
+			else
+			{
+				std::string filename_str = filename;
+				if (filename_str.find(".json") == std::string::npos)
+					filename_str += ".json";
+				my_settings.save_to_json(filename_str, types, interactions);
+			}
 		}
+		ImGui::NewLine();
+		// List all json files in the current directory
+		ImGui::Text("Load From File");
+		ImGui::SameLine();
+		ImGui::PushItemWidth(200.f);
+		std::vector<std::string> files;
+		for (const auto &entry : std::filesystem::directory_iterator("."))
+		{
+			if (entry.path().extension() == ".json")
+			{
+				std::string filename = entry.path().filename().string();
+				files.push_back(filename);
+			}
+		}
+
+		// Convert the filenames vector to a C-style array of const char*
+		std::vector<const char *> cFiles;
+		cFiles.reserve(files.size());
+		for (const auto &file : files)
+		{
+			cFiles.push_back(file.c_str());
+		}
+
+		// Drop down menu to select the JSON file to load
+		static int selected_json = 0;
+		ImGui::Combo("##json", &selected_json, cFiles.data(), static_cast<int>(cFiles.size()));
+		ImGui::SameLine();
+		if (ImGui::Button("Load"))
+		{
+			// Replace current process with a new one using execve
+			extern char **environ;
+			std::string command = "./emergence";
+			char *args[] = {const_cast<char *>("emergence"), const_cast<char *>(cFiles[selected_json]), nullptr};
+			free(particles, types);
+			execve(command.c_str(), args, environ);
+			exit(EXIT_FAILURE);
+		}
+
 		ImGui::NewLine();
 	}
 	if (ImGui::CollapsingHeader("Particle types"))
@@ -201,6 +257,7 @@ void gui(std::vector<particle_type *> &types, std::vector<std::vector<float>> &i
 		}
 	}
 
+	ImGui::PopItemWidth();
 	ImGui::PopStyleVar();
 	ImGui::End();
 }

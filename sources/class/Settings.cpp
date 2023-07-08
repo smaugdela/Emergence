@@ -9,7 +9,7 @@ Settings::Settings()
 	// Initialise using macros.
 	unsigned int antialiasing_level, particle_number;
 	std::string title;
-	float width, height, depth, temperature, particle_size, force_factor, friction_coefficient, delta_t, boundary_limit, max_range;
+	float width, height, depth, temperature, doppler_factor, particle_size, force_factor, friction_coefficient, delta_t, boundary_limit, max_range;
 	bool _3d, doppler_effect, pause, energy_conservation;
 
 	width = WIDTH;
@@ -65,6 +65,9 @@ Settings::Settings()
 
 	pause = PAUSE;
 	this->set_pause(pause);
+
+	doppler_factor = DOPPLER_FACTOR;
+	this->set_doppler_factor(doppler_factor);
 }
 
 Settings::Settings(const Settings &src)
@@ -106,6 +109,7 @@ Settings &Settings::operator=(Settings const &rhs)
 		this->doppler_effect = rhs.doppler_effect;
 		this->energy_conservation = rhs.energy_conservation;
 		this->pause = rhs.pause;
+		this->doppler_factor = rhs.doppler_factor;
 	}
 	return *this;
 }
@@ -130,6 +134,7 @@ std::ostream &operator<<(std::ostream &o, Settings const &i)
 	o << "Doppler effect: " << i.get_doppler_effect() << std::endl;
 	o << "Energy conservation: " << i.get_energy_conservation() << std::endl;
 	o << "Pause: " << i.get_pause() << std::endl;
+	o << "Doppler factor: " << i.get_doppler_factor() << std::endl;
 	return o;
 }
 
@@ -155,6 +160,7 @@ void Settings::save_to_json(std::string filename, std::vector<particle_type *> &
 	json_settings["doppler_effect"] = this->get_doppler_effect();
 	json_settings["energy_conservation"] = this->get_energy_conservation();
 	json_settings["pause"] = this->get_pause();
+	json_settings["doppler_factor"] = this->get_doppler_factor();
 
 	json_settings["types"] = json::array();
 	for (auto &type : types)
@@ -240,6 +246,9 @@ void Settings::load_from_json(json json_settings)
 
 	if (json_settings.contains("pause"))
 		this->set_pause(json_settings["pause"]);
+
+	if (json_settings.contains("doppler_factor"))
+		this->set_doppler_factor(json_settings["doppler_factor"]);
 }
 
 /*
@@ -344,10 +353,10 @@ void Settings::set_particle_number(unsigned int particle_number)
 
 void Settings::set_force_factor(float force_factor)
 {
-	if (force_factor < 1.0f)
+	if (force_factor < 0.0f)
 	{
-		force_factor = 1.0f;
-		std::cerr << "Force factor is too small, it has been set to 1." << std::endl;
+		force_factor = 0.0f;
+		std::cerr << "Force factor cannot be negative." << std::endl;
 	}
 	else if (force_factor > width * 10.f)
 	{
@@ -458,6 +467,21 @@ void Settings::set_pause(bool pause)
 	this->pause = pause;
 }
 
+void Settings::set_doppler_factor(float doppler_factor)
+{
+	if (doppler_factor < 1.f)
+	{
+		doppler_factor = 1.f;
+		std::cerr << "Doppler factor cannot be less than 1, it has been set to 1." << std::endl;
+	}
+	else if (doppler_factor > 1000.f)
+	{
+		doppler_factor = 1000.f;
+		std::cerr << "Doppler factor is too big, it has been set to 1000." << std::endl;
+	}
+	this->doppler_factor = doppler_factor;
+}
+
 // Getters
 float Settings::get_width() const
 {
@@ -547,6 +571,11 @@ bool Settings::get_energy_conservation() const
 bool Settings::get_pause() const
 {
 	return this->pause;
+}
+
+float Settings::get_doppler_factor() const
+{
+	return this->doppler_factor;
 }
 
 /* ************************************************************************** */

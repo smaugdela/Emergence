@@ -45,6 +45,7 @@ public:
 	bool get_doppler_effect() const;
 	bool get_energy_conservation() const;
 	bool get_pause() const;
+	float get_doppler_factor() const;
 
 	// Setters
 	void set_width(float width);
@@ -65,6 +66,7 @@ public:
 	void set_doppler_effect(bool doppler_effect);
 	void set_energy_conservation(bool energy_conservation);
 	void set_pause(bool pause);
+	void set_doppler_factor(float doppler_factor);
 
 private:
 	void init_simulation(std::vector<particle_type> &types, std::vector<std::vector<float>> &interactions, std::vector<Particle *> &particles);
@@ -90,6 +92,7 @@ private:
 	float max_range;	  // This is the maximum range at which two particles interact
 	bool _3d;
 	bool doppler_effect;
+	float doppler_factor;
 	bool energy_conservation;
 	bool pause;
 };
