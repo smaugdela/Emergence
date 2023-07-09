@@ -39,7 +39,6 @@ void init_simulation(json file, std::vector<particle_type *> &types, std::vector
 
 	if (types.size() == 0)
 	{
-		std::cout << "No file found, initializing with default values" << std::endl;
 		particle_type *type = new particle_type();
 		type->id = 0;
 		type->color = sf::Color::Blue;

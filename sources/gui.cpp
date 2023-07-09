@@ -14,44 +14,57 @@ void gui(std::vector<particle_type *> &types, std::vector<std::vector<float>> &i
 	ImGui::Text("That's where you play God.");
 	if (ImGui::CollapsingHeader("Hyper-Parameters"))
 	{
-		ImGui::Text("You can change the hyper-parameters of the simulation here. Be careful, somechanges may lead to unexpected or extreme results.");
+		ImGui::TextWrapped("You can change the hyper-parameters of the simulation here. Be careful, some changes may lead to unexpected or extreme results.");
+		// ImGui::Text("You can change the hyper-parameters of the simulation here. Be careful, somechanges may lead to unexpected or extreme results.");
 
 		bool paused = my_settings.get_pause();
 		ImGui::Checkbox("Pause", &paused);
 		my_settings.set_pause(paused);
+
 		ImGui::Text("FPS: %d", (int)ImGui::GetIO().Framerate);
 		ImGui::NewLine();
+
 		bool new_doppler = my_settings.get_doppler_effect();
 		ImGui::Checkbox("Doppler Effect", &new_doppler);
 		my_settings.set_doppler_effect(new_doppler);
+
 		ImGui::SameLine();
+
 		float new_doppler_factor = my_settings.get_doppler_factor();
 		ImGui::SliderFloat("Doppler Factor", &new_doppler_factor, 1.0f, 1000.0f);
 		my_settings.set_doppler_factor(new_doppler_factor);
+
 		bool new_3d = my_settings.get_3d();
 		ImGui::Checkbox("3D", &new_3d);
 		my_settings.set_3d(new_3d);
+
 		float new_radius = my_settings.get_particle_size();
 		ImGui::SliderFloat("Particle Radius", &new_radius, 1.0f, 10.0f);
 		my_settings.set_particle_size(new_radius);
+
 		float force_factor = my_settings.get_force_factor();
 		if (my_settings.get_3d() == false)
 			ImGui::SliderFloat("Force Factor", &force_factor, 0.0f, 1000.0f);
 		else
 			ImGui::SliderFloat("Force Factor", &force_factor, 0.0f, 5000.0f);
 		my_settings.set_force_factor(force_factor);
+
 		float friction_coefficient = my_settings.get_friction_coefficient();
 		ImGui::SliderFloat("Friction Coefficient", &friction_coefficient, 0.0f, 1.0f);
 		my_settings.set_friction_coefficient(friction_coefficient);
+
 		float boundary_limit = my_settings.get_boundary_limit();
 		ImGui::SliderFloat("Boundary Limit", &boundary_limit, 0.0f, 1.0f);
 		my_settings.set_boundary_limit(boundary_limit);
+
 		float max_range = std::sqrt(my_settings.get_max_range());
 		ImGui::SliderFloat("Max Range", &max_range, 0.0f, 1000.0f);
 		my_settings.set_max_range(max_range);
+
 		float new_temperature = my_settings.get_temperature();
 		ImGui::SliderFloat("Temperature", &new_temperature, 0.0f, 1.0f);
 		my_settings.set_temperature(new_temperature);
+
 		ImGui::NewLine();
 
 		// Output file name
@@ -62,23 +75,27 @@ void gui(std::vector<particle_type *> &types, std::vector<std::vector<float>> &i
 		// Save to file button
 		if (ImGui::Button("Save To File"))
 		{
+			std::string filename_str = filename;
 			if (filename[0] == '\0')
-				my_settings.save_to_json("default.json", types, interactions);
-			else
-			{
-				std::string filename_str = filename;
-				if (filename_str.find(".json") == std::string::npos)
-					filename_str += ".json";
-				my_settings.save_to_json(filename_str, types, interactions);
-			}
+				filename_str = "default.json";
+			if (filename_str.find(".json") == std::string::npos)
+				filename_str += ".json";
+			// If file already exists, append an underscore at the beginning of the filename
+			if (std::filesystem::exists("./data/" + filename_str))
+				filename_str = "_" + filename_str;
+			filename_str = "./data/" + filename_str;
+
+			my_settings.save_to_json(filename_str, types, interactions);
 		}
+
 		ImGui::NewLine();
-		// List all json files in the current directory
+
+		// List all json files in the ./data directory
 		ImGui::Text("Load From File");
 		ImGui::SameLine();
 		ImGui::PushItemWidth(200.f);
 		std::vector<std::string> files;
-		for (const auto &entry : std::filesystem::directory_iterator("."))
+		for (const auto &entry : std::filesystem::directory_iterator("./data"))
 		{
 			if (entry.path().extension() == ".json")
 			{
@@ -104,7 +121,8 @@ void gui(std::vector<particle_type *> &types, std::vector<std::vector<float>> &i
 			// Replace current process with a new one using execve
 			extern char **environ;
 			std::string command = "./emergence";
-			char *args[] = {const_cast<char *>("emergence"), const_cast<char *>(cFiles[selected_json]), nullptr};
+			std::string arg = "./data/" + std::string(cFiles[selected_json]);
+			char *args[] = {const_cast<char *>("emergence"), const_cast<char *>(arg.c_str()), nullptr};
 			free(particles, types);
 			execve(command.c_str(), args, environ);
 			exit(EXIT_FAILURE);
@@ -114,7 +132,7 @@ void gui(std::vector<particle_type *> &types, std::vector<std::vector<float>> &i
 	}
 	if (ImGui::CollapsingHeader("Particle types"))
 	{
-		ImGui::Text("You can add, delete and modify the particles amount for each types here.");
+		ImGui::TextWrapped("You can add, delete and modify the particles amount for each types here.");
 		// Print the list of items with colored blocks
 		for (auto &item : types)
 		{
@@ -198,7 +216,7 @@ void gui(std::vector<particle_type *> &types, std::vector<std::vector<float>> &i
 
 	if (ImGui::CollapsingHeader("Interaction Matrix"))
 	{
-		ImGui::Text("You can modify the interaction matrix here. Each <ij> coefficient represent how much particles of type <i> are attracted (or repelled if negative) to particles of type <j>.");
+		ImGui::TextWrapped("You can modify the interaction matrix here. Each <ij> coefficient represent how much particles of type <i> are attracted (or repelled if negative) to particles of type <j>.");
 
 		bool symmetric = my_settings.get_energy_conservation();
 		ImGui::Checkbox("Symmetric", &symmetric);

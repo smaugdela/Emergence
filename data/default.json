@@ -1,0 +1,1 @@
+{"3D":true,"antialiasing_level":4,"boundary_limit":0.15000000596046448,"doppler_effect":false,"doppler_factor":10.0,"energy_conservation":false,"force_factor":100.0,"friction_coefficient":0.009999999776482582,"interactions":[1.0],"max_range":600.0,"particle_size":5.0,"pause":true,"temperature":0.0,"title":"Emergence","types":[{"amount":500,"color":[0,0,255],"id":0}]}
