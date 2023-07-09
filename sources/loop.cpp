@@ -47,8 +47,11 @@ int loop(sf::RenderWindow &window, json file)
 		window.clear();
 
 		// Update the particles
-		compute_particles(particles, interactions);
-		update_particles(particles);
+		if (my_settings.get_pause() == false)
+		{
+			compute_particles(particles, interactions);
+			update_particles(particles);
+		}
 		draw_particles(window, particles);
 
 		ImGui::SFML::Render(window);

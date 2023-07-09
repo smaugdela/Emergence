@@ -169,9 +169,6 @@ void Particle::compute(std::vector<std::vector<Particle *>> &particles, std::vec
 
 void Particle::update()
 {
-	if (my_settings.get_pause())
-		return;
-
 	_x = _future_x;
 	_y = _future_y;
 	_z = _future_z;

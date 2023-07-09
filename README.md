@@ -14,6 +14,7 @@ Trying to demonstrate emergence phenomenon through a simple graphical side-proje
 - [x] Pause button (delta_t = 0)
 - [x] Load file button
 - [x] Add a conservation of energy button (symmetrical interactions matrix)
+- [x] Add a randomizer button for the interaction matrix
 - [ ] Create a good documentation and tutorial
 - [ ] Add mouse cursor interaction (repulsive/attractive force, generate/delete particles).
 - [ ] Add Multithreading

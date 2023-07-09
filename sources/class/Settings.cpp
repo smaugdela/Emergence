@@ -148,6 +148,8 @@ void Settings::save_to_json(std::string filename, std::vector<particle_type *> &
 	std::ofstream file(filename);
 	json json_settings;
 
+	// json_settings["pause"] = this->get_pause(); I want to always start paused
+
 	json_settings["title"] = this->get_title();
 	json_settings["antialiasing_level"] = this->get_antialiasing_level();
 	json_settings["particle_size"] = this->get_particle_size();
@@ -159,7 +161,6 @@ void Settings::save_to_json(std::string filename, std::vector<particle_type *> &
 	json_settings["temperature"] = this->get_temperature();
 	json_settings["doppler_effect"] = this->get_doppler_effect();
 	json_settings["energy_conservation"] = this->get_energy_conservation();
-	json_settings["pause"] = this->get_pause();
 	json_settings["doppler_factor"] = this->get_doppler_factor();
 
 	json_settings["types"] = json::array();
