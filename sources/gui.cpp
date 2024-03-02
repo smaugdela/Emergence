@@ -1,5 +1,32 @@
 #include "emergence.hpp"
 
+#ifdef _WIN32
+// Windows-specific code
+#include <Windows.h>
+
+static std::string GetExecutablePath()
+{
+	char buffer[MAX_PATH];
+	GetModuleFileName(nullptr, buffer, MAX_PATH);
+	std::string path = std::string(buffer);
+	return path.substr(0, path.find_last_of("\\/"));
+}
+
+#endif
+
+#ifdef __linux__
+// Linux-specific code
+
+static std::string GetExecutablePath()
+{
+	char buffer[PATH_MAX];
+	ssize_t count = readlink("/proc/self/exe", buffer, sizeof(buffer));
+	std::string path = std::string(buffer, (count > 0) ? count : 0);
+	return path.substr(0, path.find_last_of("/"));
+}
+
+#endif
+
 void gui(std::vector<particle_type *> &types, std::vector<std::vector<float>> &interactions, std::vector<std::vector<Particle *>> &particles, sf::RenderWindow &window)
 {
 	bool showImGuiWindow = true;
@@ -27,6 +54,8 @@ void gui(std::vector<particle_type *> &types, std::vector<std::vector<float>> &i
 		ImGui::TextWrapped("You can save and load the current state of the simulation here. The files are saved in the ./data directory.");
 		ImGui::NewLine();
 
+		std::string path = GetExecutablePath();
+
 		// Output file name
 		ImGui::Text("Save To File");
 		ImGui::SameLine();
@@ -43,21 +72,21 @@ void gui(std::vector<particle_type *> &types, std::vector<std::vector<float>> &i
 			if (filename_str.find(".json") == std::string::npos)
 				filename_str += ".json";
 			// If file already exists, append an underscore at the beginning of the filename
-			if (std::filesystem::exists("./data/" + filename_str))
+			if (std::filesystem::exists(path + "/data/" + filename_str))
 				filename_str = "_" + filename_str;
-			filename_str = "./data/" + filename_str;
+			filename_str = path + "/data/" + filename_str;
 
 			my_settings.save_to_json(filename_str, types, interactions);
 		}
 
 		ImGui::NewLine();
 
-		// List all json files in the ./data directory
+		// List all json files in the /data directory
 		ImGui::Text("Load From File");
 		ImGui::SameLine();
 		ImGui::PushItemWidth(200.f);
 		std::vector<std::string> files;
-		for (const auto &entry : std::filesystem::directory_iterator("./data"))
+		for (const auto &entry : std::filesystem::directory_iterator(path + "/data"))
 		{
 			if (entry.path().extension() == ".json")
 			{
@@ -83,7 +112,7 @@ void gui(std::vector<particle_type *> &types, std::vector<std::vector<float>> &i
 			// Replace current process with a new one using execve
 			extern char **environ;
 			std::string command = "./emergence";
-			std::string arg = "./data/" + std::string(cFiles[selected_json]);
+			std::string arg = path + "/data/" + std::string(cFiles[selected_json]);
 			char *args[] = {const_cast<char *>("emergence"), const_cast<char *>(arg.c_str()), nullptr};
 			free(particles, types);
 			execve(command.c_str(), args, environ);

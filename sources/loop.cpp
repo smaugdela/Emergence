@@ -18,6 +18,8 @@ int loop(sf::RenderWindow &window, json file)
 
 	init_simulation(file, types, interactions, particles);
 
+	window.requestFocus();
+
 	while (window.isOpen())
 	{
 		// Compute the physics delta_t
